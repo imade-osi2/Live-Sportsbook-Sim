@@ -197,3 +197,252 @@ project-root/
 ├── requirements.txt
 ├── README.md
 └── .env.example
+```
+
+---
+
+## **Data Model Overview**
+
+The warehouse is organized around sportsbook-style analytics.
+
+### **Fact Tables**
+- `fact_bets`
+- `fact_odds_history`
+- `fact_games`
+
+### **Dimension Tables**
+- `dim_users`
+- `dim_teams`
+- `dim_games`
+
+These models support downstream analytics and dashboard reporting.
+
+---
+
+## **Governance and Privacy**
+
+This project does **not** use real user data.
+
+To reflect production-safe practices:
+
+- all users are simulated
+- user identifiers are hashed
+- no personal information is stored
+- raw, staging, and curated layers are separated
+- schema validation checks are applied
+- data quality tests are included
+- lineage and data definitions are documented
+
+---
+
+## **Observability and Quality**
+
+The project includes basic production-style controls such as:
+
+- schema validation for event payloads
+- dbt model tests
+- logging for pipeline runs
+- record count checks
+- invalid event handling
+- documentation for data lineage and runbooks
+
+---
+
+## **Local Setup**
+
+### **Prerequisites**
+
+Install the following before starting:
+
+- Python 3.11+
+- Docker Desktop
+- PostgreSQL
+- Google Cloud SDK
+- Terraform
+- Java 17+
+- Apache Kafka
+- Apache Spark
+- dbt Core
+
+---
+
+## **Environment Setup**
+
+Clone the repository:
+
+```bash
+git clone <your-repo-url>
+cd <your-repo-folder>
+```
+
+Create and activate a virtual environment:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Install Python dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Copy the environment template:
+
+```bash
+cp .env.example .env
+```
+
+Update `.env` with your local and cloud configuration values.
+
+---
+
+## **Google Cloud Setup**
+
+Authenticate with Google Cloud:
+
+```bash
+gcloud auth application-default login
+gcloud auth login
+```
+
+Set your project:
+
+```bash
+gcloud config set project YOUR_GCP_PROJECT_ID
+```
+
+Create or verify:
+
+- GCS bucket
+- BigQuery dataset
+- service account permissions
+
+If using Terraform, these resources will be provisioned automatically.
+
+---
+
+## **Infrastructure Setup**
+
+From the `terraform/` directory:
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+This should provision the core cloud infrastructure such as:
+
+- GCS bucket(s)
+- BigQuery dataset(s)
+- related cloud resources for the project
+
+---
+
+## **Start Local Services**
+
+Use Docker Compose to start local services such as PostgreSQL and Kafka:
+
+```bash
+docker-compose up -d
+```
+
+Confirm containers are running:
+
+```bash
+docker ps
+```
+
+---
+
+## **Run the Initial Pipelines**
+
+### **1. Ingest NBA reference and schedule data**
+```bash
+python ingestion/batch_jobs/load_nba_schedule.py
+```
+
+### **2. Start Kafka producers**
+```bash
+python ingestion/producers/bets_producer.py
+python ingestion/producers/odds_producer.py
+python ingestion/producers/game_updates_producer.py
+```
+
+### **3. Start Kafka consumers**
+```bash
+python streaming/consumers/bets_consumer.py
+python streaming/consumers/odds_consumer.py
+python streaming/consumers/game_updates_consumer.py
+```
+
+### **4. Run Spark processing jobs**
+```bash
+spark-submit spark/jobs/process_betting_events.py
+```
+
+### **5. Run dbt models**
+```bash
+cd dbt
+dbt deps
+dbt seed
+dbt run
+dbt test
+```
+
+### **6. Trigger orchestration flows**
+Run Kestra flows for scheduled ingestion and transformation jobs.
+
+---
+
+## **Dashboard Setup**
+
+After warehouse tables and dbt models are built:
+
+1. Connect **Looker Studio** to BigQuery
+2. Use curated models as data sources
+3. Build dashboards for:
+   - bet volume
+   - win rate
+   - line movement
+   - odds movement
+   - live vs pregame betting mix
+   - payout / exposure by game
+
+---
+
+## **Reproduction Steps**
+
+To reproduce the project from scratch:
+
+1. install prerequisites
+2. clone the repo
+3. configure `.env`
+4. authenticate with GCP
+5. run Terraform
+6. start Docker services
+7. run ingestion jobs
+8. start Kafka producers and consumers
+9. run Spark jobs
+10. build dbt models
+11. connect Looker Studio to BigQuery
+
+---
+
+## **Current Scope**
+
+### **Included in MVP**
+- NBA data only
+- live betting events
+- pregame betting lines
+- batch + streaming pipelines
+- cloud warehouse models
+- Looker Studio dashboards
+
+### **Planned Expansion**
+- additional sports leagues
+- richer bet types
+- more advanced observability
+- broader analytics coverage
