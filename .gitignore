@@ -23,3 +23,17 @@ __pycache__/
 
 # Allow example env files
 !.env.example
+
+# Ignore Terraform state, cache, and provider binaries
+.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log
+terraform.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore VS Code settings (optional, if you don't want to share them)
+.vscode/
