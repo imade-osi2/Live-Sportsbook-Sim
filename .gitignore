@@ -37,3 +37,9 @@ override.tf.json
 
 # Ignore VS Code settings (optional, if you don't want to share them)
 .vscode/
+
+# Ignore all files by default
+*
+# But not these files/directories!
+!.gitignore
+!ingestion/batch_jobs/load_stream_tables_to_bigquery.py
