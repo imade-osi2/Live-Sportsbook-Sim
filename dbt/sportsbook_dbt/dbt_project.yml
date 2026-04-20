@@ -33,3 +33,5 @@ models:
   sportsbook_dbt:
     staging:
       +materialized: view
+    marts:
+      +materialized: table
