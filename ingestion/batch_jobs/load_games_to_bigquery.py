@@ -1,4 +1,5 @@
 import os
+import tempfile
 import pandas as pd
 from dotenv import load_dotenv
 from google.cloud import bigquery
@@ -35,8 +36,22 @@ def load_to_bigquery(df):
 
     client = bigquery.Client(project=project_id)
 
-    job = client.load_table_from_dataframe(df, table_id)
+    job_config = bigquery.LoadJobConfig(
+        source_format=bigquery.SourceFormat.CSV,
+        skip_leading_rows=1,
+        autodetect=True,
+        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
+    )
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as tmp_file:
+        df.to_csv(tmp_file.name, index=False)
+        temp_path = tmp_file.name
+
+    with open(temp_path, "rb") as source_file:
+        job = client.load_table_from_file(source_file, table_id, job_config=job_config)
+
     job.result()
+    os.remove(temp_path)
 
     print(f"Loaded {len(df)} rows to {table_id}")
 

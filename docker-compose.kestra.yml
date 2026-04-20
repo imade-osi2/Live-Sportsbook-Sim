@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  kestra:
+    image: kestra/kestra:latest
+    container_name: sportsbook_kestra
+    pull_policy: always
+    user: "root"
+    command: server local
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./orchestration/kestra:/app/flows
+      - ./:/workspace
+      - ~/.config/gcloud/application_default_credentials.json:/root/.config/gcloud/application_default_credentials.json:ro
+    environment:
+      POSTGRES_DB: sportsbook
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pg
+      POSTGRES_HOST: sportsbook_postgres
+      POSTGRES_PORT: 5432
+      GCP_PROJECT_ID: de26-live-sportsbook-sim
+      GCS_BUCKET: de26-live-sportsbook-bucket
+      BIGQUERY_DATASET: de26_sportsbook_analytics
+      BALLDONTLIE_API_KEY: ${BALLDONTLIE_API_KEY}
+      GOOGLE_APPLICATION_CREDENTIALS: /root/.config/gcloud/application_default_credentials.json
+      KESTRA_CONFIGURATION: |
+        kestra:
+          server:
+            basic-auth:
+              enabled: false
+          repository:
+            type: memory
+          storage:
+            type: local
+            local:
+              base-path: "/tmp/kestra"
+    networks:
+      - sportsbook_net
+
+networks:
+  sportsbook_net:
+    external: true

@@ -7,11 +7,13 @@ services:
     environment:
       POSTGRES_DB: sportsbook
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: pg
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sportsbook_net
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -21,6 +23,8 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
+    networks:
+      - sportsbook_net
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
@@ -34,6 +38,12 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - sportsbook_net
 
 volumes:
   postgres_data:
+
+networks:
+  sportsbook_net:
+    name: sportsbook_net

@@ -1,0 +1,23 @@
+id: nba_schedule_ingestion
+namespace: sportsbook
+
+tasks:
+  - id: run_nba_schedule_ingestion
+    type: io.kestra.plugin.scripts.python.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - cd /workspace
+      - source .venv/bin/activate
+    commands:
+      - python -m ingestion.batch_jobs.load_nba_schedule_api
+
+  - id: load_games_to_bigquery
+    type: io.kestra.plugin.scripts.python.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - cd /workspace
+      - source .venv/bin/activate
+    commands:
+      - python -m ingestion.batch_jobs.load_games_to_bigquery
