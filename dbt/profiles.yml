@@ -1,0 +1,12 @@
+sportsbook_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: de26-live-sportsbook-sim
+      dataset: de26_sportsbook_analytics
+      threads: 4
+      job_execution_timeout_seconds: 300
+      location: US
+      priority: interactive

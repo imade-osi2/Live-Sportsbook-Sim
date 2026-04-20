@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: raw
+    database: de26-live-sportsbook-sim
+    schema: de26_sportsbook_analytics
+    tables:
+      - name: raw_nba_games
+      - name: raw_bet_events_stream
+      - name: raw_odds_updates_stream
+      - name: raw_game_updates_stream

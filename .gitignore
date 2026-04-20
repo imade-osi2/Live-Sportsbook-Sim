@@ -1,6 +1,18 @@
-# Ignore Python virtual environments
+# Ignore Python virtual environments and their contents
+.venv/
 venv/
-.env
+ENV/
+
+# Ignore large binary files and build artifacts
+*.so
+*.jar
+*.dylib
+
+# Ignore pyarrow, pyspark, and other package binaries
+**/pyarrow/*.dylib
+**/pyspark/jars/*.jar
+**/cryptography/hazmat/bindings/*.so
+**/grpc/_cython/*.so
 
 # Ignore environment variable files with secrets
 .env
@@ -38,8 +50,3 @@ override.tf.json
 # Ignore VS Code settings (optional, if you don't want to share them)
 .vscode/
 
-# Ignore all files by default
-*
-# But not these files/directories!
-!.gitignore
-!ingestion/batch_jobs/load_stream_tables_to_bigquery.py
