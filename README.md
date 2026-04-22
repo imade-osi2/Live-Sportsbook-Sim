@@ -497,7 +497,7 @@ The correct API base is:
 
 Important details:
 - the old `www.balldontlie.io/api/v1/...` route returned `404`
-- the current API requires an `Authorization` header
+- the current API requires an `Authorization` header and API key after creating an account
 - missing or invalid API keys cause `401 Unauthorized`
 
 ### **BigQuery Load Method**
