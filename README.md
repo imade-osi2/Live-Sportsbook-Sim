@@ -1,95 +1,88 @@
-# **Simulated Live Sports Betting Data Platform**
+# **Live & Pre-Game Sports Betting Analytics Platform**
 
 ---
 
-A production-style data engineering project that simulates live sports betting activity using batch and streaming pipelines.
+A production-style data engineering project that ingests real NBA events, bookmaker odds, and score data, transforms them into analytics-ready warehouse models, and publishes a live sportsbook-style reporting layer in Looker Studio.
 
-It ingests NBA game data, simulated betting line updates, and simulated user betting events, processes them through a cloud-based data platform, and delivers analytics-ready datasets for reporting, monitoring, and business insights in Looker Studio.
+The platform is built to answer practical betting-market questions such as:
+- what games are currently on the board
+- which bookmakers have the best available prices
+- how prices differ across books
+- which matchups show stronger value signals
+- how pre-game and live market states differ over time
 
 ---
 
 ## **Project Goal**
 
-This project is designed to demonstrate a real-world data engineering workflow that supports both:
+This project demonstrates a real-world sports data platform that combines:
 
-- **Live betting events** during active NBA games
-- **Pregame betting lines** when games are not live
+- **real NBA event data**
+- **real bookmaker odds**
+- **real score / game-state data**
+- **warehouse modeling for market analysis**
+- **dashboard delivery for decision support**
 
-The platform is built to reflect production-style engineering practices, including streaming, batch processing, orchestration, transformation, testing, observability, governance, and analytics delivery.
+The focus is not on real bettor wager feeds. Instead, the platform is designed to track the market itself and surface useful betting-oriented metrics such as:
+- latest moneyline prices by bookmaker
+- number of active games
+- number of tracked bookmakers
+- suggested value opportunities
+- expected value and edge signals
+- game state context (pregame, live, final)
+- evaluation of suggested plays against later observed prices
 
 ---
 
 ## **Architecture Overview**
 
-The system combines **streaming**, **batch ingestion**, **cloud warehousing**, **analytics engineering**, and **dashboard delivery**.
+The platform combines API ingestion, local storage, cloud warehousing, analytics engineering, orchestration, and BI delivery.
 
 ### **High-Level Flow**
 
-1. **NBA API** provides real NBA schedule and game metadata
-2. **Simulated sportsbook events** generate bets, odds updates, and game updates
-3. **Kafka** captures real-time event streams
-4. **Python ingestion jobs** load source and stream data into PostgreSQL
-5. **Kestra** orchestrates ingestion and warehouse-loading workflows
-6. **BigQuery** stores raw, staging, and curated analytical tables
-7. **dbt** transforms raw warehouse data into business-ready models
-8. **Looker Studio** visualizes sportsbook metrics for reporting and analysis
+1. **The Odds API** provides real NBA events, odds, and scores
+2. **Python ingestion jobs** load raw market data into PostgreSQL
+3. **BigQuery loaders** move those raw tables into the analytics warehouse
+4. **dbt** builds staging, mart, and aggregate models for reporting
+5. **Kestra** orchestrates repeatable refresh workflows
+6. **Looker Studio** reads the curated models and displays live and pre-game market analytics
 
 ---
 
 ## **Architecture Components**
 
-### **Data Sources**
-- Real NBA game and schedule data from BallDontLie API
-- Simulated user betting activity
-- Simulated odds update events
-- Simulated game state update events
-
-### **Streaming Layer**
-Kafka handles real-time event ingestion for:
-
-- `bets`
-- `odds_updates`
-- `game_updates`
-
-### **Batch Layer**
-Batch pipelines are used for:
-
-- NBA schedule and game metadata ingestion
-- BigQuery warehouse loading
-- analytics table generation
-- scheduled orchestration via Kestra
+### **Market Data Sources**
+- NBA event schedule and event IDs
+- real bookmaker odds for moneyline, spreads, and totals
+- live and completed score updates
+- bookmaker-specific price snapshots across multiple books
 
 ### **Storage Layer**
-Data moves through three layers:
-
-- **Raw**: source and event-level warehouse tables
-- **Staging**: cleaned dbt views on top of raw tables
-- **Curated**: marts and aggregate tables for dashboard use
-
-### **Warehouse Layer**
-BigQuery stores all analytical tables used by dbt and Looker Studio.
+Data is persisted across:
+- **PostgreSQL** for local ingestion and operational staging
+- **BigQuery** for warehouse modeling and dashboard consumption
 
 ### **Transformation Layer**
-dbt builds:
-- staging models for source cleanup
-- mart models for core betting analytics
-- aggregate models for dashboard metrics
+dbt is used to build:
+- source cleanup models
+- event and odds fact tables
+- game-level market board models
+- suggestion / evaluation models
+- dashboard aggregates
 
 ### **Orchestration Layer**
-Kestra manages:
-- real NBA schedule ingestion
-- warehouse refresh jobs
-- repeatable task execution
-- multi-step pipeline runs
+Kestra is used to:
+- manually refresh market data
+- run end-to-end update flows
+- automate warehouse refreshes later if desired
 
 ### **Analytics Layer**
-Looker Studio is used as the BI layer to surface:
-- bet volume
-- handle by game
-- average stake
-- market type mix
-- odds movement
-- live vs pregame bet mix
+Looker Studio surfaces:
+- overview KPIs
+- live market board
+- suggested bets board
+- evaluation board
+- research board
 
 ---
 
@@ -107,28 +100,23 @@ Looker Studio is used as the BI layer to surface:
 ### **Storage**
 - PostgreSQL
 - BigQuery
-- Google Cloud Storage (provisioned for platform layer)
+- Google Cloud Storage
 
-### **Streaming**
+### **Streaming / Platform Support**
 - Kafka
 - Zookeeper
-
-### **Processing**
-- Python batch jobs
-- Spark (reserved for larger-scale processing extension)
-
-### **Orchestration**
-- Kestra
 
 ### **Transformation**
 - dbt
 
+### **Orchestration**
+- Kestra
+
 ### **Analytics / BI**
 - Looker Studio
 
-### **CI / Collaboration**
+### **Version Control**
 - GitHub
-- GitHub Actions
 
 ---
 
@@ -161,10 +149,6 @@ project-root/
 │       ├── macros/
 │       └── dbt_project.yml
 │
-├── spark/
-│   ├── jobs/
-│   └── utils/
-│
 ├── terraform/
 │   ├── main.tf
 │   ├── variables.tf
@@ -174,19 +158,6 @@ project-root/
 │   └── looker_studio/
 │
 ├── docs/
-│   ├── architecture.md
-│   ├── governance.md
-│   ├── data_dictionary.md
-│   ├── lineage.md
-│   └── runbook.md
-│
-├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── data_quality/
-│
-├── .github/
-│   └── workflows/
 │
 ├── docker-compose.yml
 ├── docker-compose.kestra.yml
@@ -197,61 +168,30 @@ project-root/
 
 ---
 
-## **Data Model Overview**
+## **Current Data Model**
 
-The warehouse is organized around sportsbook-style analytics.
+The warehouse is now centered around real market data and dashboard-ready betting analytics.
 
-### **Core Mart Models**
-- `dim_games`
-- `fact_bets`
-- `fact_odds_history`
+### **Core Real Market Models**
+- `dim_events`
+- `fact_real_odds_history`
+- `fact_real_scores`
 
-### **Looker-Ready Aggregate Models**
-- `agg_betting_activity_by_game`
-- `agg_market_type_summary`
-- `agg_odds_movement_by_game`
-- `agg_live_vs_pregame_bet_mix`
+### **Live Market / Dashboard Models**
+- `agg_latest_real_odds_by_game`
+- `agg_live_market_board`
+- `agg_platform_kpis`
 
-These models support downstream reporting and dashboard analysis.
+### **Suggestion / Evaluation Models**
+- `fact_bet_suggestions`
+- `agg_suggested_bets_board`
+- `fact_bet_evaluation`
+- `agg_clv_summary`
+- `agg_suggestion_performance_summary`
 
----
-
-## **Governance and Privacy**
-
-This project does **not** use real user data.
-
-To reflect production-safe practices:
-- all sportsbook users are simulated
-- no personal information is stored
-- raw, staging, and curated layers are separated
-- warehouse transformations are reproducible
-- event data is structured and traceable
-- dbt models provide a controlled analytics layer
-
----
-
-## **Observability and Quality**
-
-The project includes basic production-style controls such as:
-- repeatable ingestion scripts
-- Kafka event separation by topic
-- dbt modeling layers
-- Kestra workflow logs
-- warehouse verification queries
-- reproducible infrastructure with Terraform
-
----
-
-## **Prerequisites**
-
-Install the following before starting:
-- Python 3.11+
-- Docker Desktop
-- PostgreSQL
-- Google Cloud SDK
-- Terraform
-- Java 17+
-- dbt Core / `dbt-bigquery`
+### **Research / Context Models**
+- `fact_game_research_signals`
+- `agg_research_board`
 
 ---
 
@@ -295,11 +235,15 @@ POSTGRES_PORT=5432
 
 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
 
-GCP_PROJECT_ID=de26-live-sportsbook-sim
-GCS_BUCKET=de26-live-sportsbook-bucket
+GCP_PROJECT_ID=your_gcp_project_id
+GCS_BUCKET=your_bucket_name
 BIGQUERY_DATASET=de26_sportsbook_analytics
 
-BALLDONTLIE_API_KEY=your_api_key_here
+BALLDONTLIE_API_KEY=your_balldontlie_key
+THE_ODDS_API_KEY=your_the_odds_api_key
+THE_ODDS_SPORT=basketball_nba
+THE_ODDS_REGIONS=us
+THE_ODDS_MARKETS=h2h,spreads,totals
 ```
 
 ---
@@ -308,7 +252,7 @@ BALLDONTLIE_API_KEY=your_api_key_here
 
 ### **Google Cloud Authentication**
 
-Authenticate locally before using Terraform, dbt, or BigQuery loaders:
+Authenticate locally before using Terraform, loaders, or dbt:
 
 ```bash
 gcloud auth login
@@ -326,15 +270,13 @@ terraform plan
 terraform apply
 ```
 
-This provisions:
-- GCS bucket
-- BigQuery dataset
+This provisions the core GCP resources used by the warehouse.
 
 ---
 
 ## **Start Local Services**
 
-Start PostgreSQL, Zookeeper, and Kafka:
+Start the local stack:
 
 ```bash
 docker compose up -d
@@ -346,45 +288,30 @@ Expected containers:
 - `sportsbook_zookeeper`
 - `sportsbook_kafka`
 
+Start Kestra separately when needed:
+
+```bash
+docker compose -f docker-compose.kestra.yml up -d
+```
+
 ---
 
-## **Run the Core Pipeline**
+## **Run the Core Market Pipeline**
 
-### **1. Create local source tables in PostgreSQL**
-Create the `raw` schema and source tables for:
-- `raw.nba_games`
-- `raw.bet_events_stream`
-- `raw.odds_updates_stream`
-- `raw.game_updates_stream`
-
-### **2. Load initial NBA sample data**
+### **1. Pull real NBA event, odds, and score data**
 ```bash
-python -m ingestion.batch_jobs.load_nba_schedule
+python -m ingestion.batch_jobs.load_nba_events_api
+python -m ingestion.batch_jobs.load_nba_odds_api
+python -m ingestion.batch_jobs.load_nba_scores_api
 ```
 
-### **3. Start Kafka event flow**
-Run consumers first, then producers:
-
+### **2. Load raw market tables into BigQuery**
 ```bash
-python -m streaming.consumers.bets_consumer
-python -m streaming.consumers.odds_consumer
-python -m streaming.consumers.game_updates_consumer
+python -m ingestion.batch_jobs.load_nba_market_tables_to_bigquery
 ```
 
-```bash
-python -m ingestion.producers.bets_producer
-python -m ingestion.producers.odds_producer
-python -m ingestion.producers.game_updates_producer
-```
-
-### **4. Load raw tables into BigQuery**
-```bash
-python -m ingestion.batch_jobs.load_games_to_bigquery
-python -m ingestion.batch_jobs.load_stream_tables_to_bigquery
-```
-
-### **5. Build dbt models**
-Run dbt from the **correct project path**:
+### **3. Build dbt models**
+Always run dbt from the correct project path:
 
 ```bash
 cd dbt/sportsbook_dbt
@@ -392,42 +319,13 @@ dbt debug
 dbt run
 ```
 
-### **6. Run orchestration in Kestra**
-Start Kestra:
-
-```bash
-docker compose -f docker-compose.kestra.yml up -d
-```
-
-Open:
-- `http://localhost:8080`
-
-Run the `nba_schedule_ingestion` flow to:
-- pull real NBA game data from BallDontLie API
-- load refreshed games into PostgreSQL
-- load refreshed games into BigQuery
-
----
-
-## **Reproduction Steps**
-
-To reproduce the project from scratch:
-
-1. install prerequisites
-2. clone the repository
-3. create and activate `.venv`
-4. install Python and dbt dependencies
-5. configure `.env`
-6. authenticate with GCP
-7. run Terraform
-8. start Docker services
-9. create PostgreSQL raw tables
-10. run initial batch ingestion
-11. run Kafka producers and consumers
-12. load raw tables into BigQuery
-13. run dbt from `dbt/sportsbook_dbt`
-14. start Kestra and run the orchestration flow
-15. connect Looker Studio to the curated BigQuery tables
+### **4. Refresh the full pipeline manually with Kestra**
+Use the manual refresh flow in Kestra to:
+- refresh events
+- refresh odds
+- refresh scores
+- load raw market tables to BigQuery
+- rebuild dbt models
 
 ---
 
@@ -438,158 +336,278 @@ The dashboard is publicly accessible at:
 🔗 **View Live Dashboard**  
 https://datastudio.google.com/reporting/e96ea5f4-9ab8-47f7-b99f-5f9e9b22c042
 
-To connect your own BigQuery data to Looker Studio:
+The current dashboard presents a sportsbook-style operating view built around live and pre-game odds rather than raw ingestion tables. Current top-line metrics include:
+- **active_games = 10**
+- **bookmakers_tracked = 9**
+- **total_suggestions = 506**
+- **avg_expected_value = 0.03**
+- **avg_edge = 0.01**
+- **high_confidence_suggestions = 41**
 
-1. Go to `datastudio.google.com`
-2. Click **Create** → **Report**
-3. Click **Add data**
-4. Choose **BigQuery**
-5. Select:
-   - project: `de26-live-sportsbook-sim`
-   - dataset: `de26_sportsbook_analytics`
-6. Add these tables one by one:
-   - `agg_betting_activity_by_game`
-   - `agg_market_type_summary`
-   - `agg_odds_movement_by_game`
-   - `agg_live_vs_pregame_bet_mix`
+---
 
-### **Dashboard Contents**
+## **Dashboard Pages and Metrics**
 
-The dashboard is designed around the following metric tables:
+### **1. Overview**
+Primary source tables:
+- `agg_platform_kpis`
+- `agg_research_board`
+- `agg_suggestion_performance_summary`
 
-| Chart / View | Recommended Type | Source Table | Insight |
-|---|---|---|---|
-| Betting Activity by Game | Bar chart / table | `agg_betting_activity_by_game` | Total bets, handle, and average stake by game |
-| Market Type Summary | Bar chart / donut chart | `agg_market_type_summary` | Shows which bet markets drive volume |
-| Odds Movement by Game | Table / scorecard mix | `agg_odds_movement_by_game` | Tracks min/max odds and update count |
-| Live vs Pregame Bet Mix | Donut / bar chart | `agg_live_vs_pregame_bet_mix` | Splits handle and bet count by timing |
+Key metrics:
+- active games
+- bookmakers tracked
+- total suggestions
+- high-confidence suggestions
+- average expected value
+- average edge
+- research board sorted by strongest signals
 
-Suggested scorecards:
-- total bets
-- total handle
-- average stake
-- number of games with betting activity
+This page gives the quickest read on how many markets are available and how many current opportunities are being surfaced.
+
+### **2. Live Market Board**
+Primary source table:
+- `agg_live_market_board`
+
+Key fields:
+- `game_date`
+- `matchup`
+- `game_state`
+- `bookmaker_title`
+- `outcome_name`
+- `latest_h2h_price`
+- `away_score`
+- `home_score`
+
+This board is the market view: it shows the currently available moneyline prices by bookmaker for each matchup and whether the game is still pregame, live, or final.
+
+### **3. Suggested Bets Board**
+Primary source table:
+- `agg_suggested_bets_board`
+
+Key fields:
+- `game_date`
+- `matchup`
+- `game_state`
+- `bookmaker_title`
+- `outcome_name`
+- `confidence_tier`
+- `edge`
+- `price`
+- `expected_value`
+
+This board highlights the highest-value current suggestions based on the platform’s current pricing logic.
+
+### **4. Evaluation Board**
+Primary source tables:
+- `fact_bet_evaluation`
+- `agg_clv_summary`
+- `agg_suggestion_performance_summary`
+
+Key fields:
+- `matchup`
+- `game_date`
+- `bookmaker_title`
+- `outcome_name`
+- `clv_result`
+- `bet_result`
+- `suggested_price`
+- `closing_price_proxy`
+
+This page evaluates whether a suggestion held up against later observed prices and whether it won or lost once game results were available.
+
+### **5. Research Board**
+Primary source table:
+- `agg_research_board`
+
+Key fields:
+- `game_date`
+- `game_state`
+- `market_shape_signal`
+- `pricing_signal`
+- `best_edge`
+- `best_expected_value`
+
+This board gives a structured summary of why a matchup looks interesting from a market standpoint.
+
+---
+
+## **Useful Betting Metrics in the Dashboard**
+
+The dashboard is intentionally centered on practical market metrics instead of generic BI-only stats.
+
+### **Latest H2H Price by Bookmaker**
+Used to compare the current market price for each team across books.
+
+Why it matters:
+- helps identify the best available number
+- shows whether a side is drifting or strengthening across books
+- supports line-shopping logic
+
+### **Best Expected Value**
+Used on the research and suggested bets views.
+
+Why it matters:
+- summarizes the strongest current opportunity at the game level
+- helps prioritize which games deserve manual review
+
+### **Edge**
+Represents the platform’s current difference between estimated fair probability and implied probability.
+
+Why it matters:
+- acts as a quick ranking measure for opportunity strength
+- helps separate weak market noise from stronger signals
+
+### **High-Confidence Suggestions**
+Count of suggestions that passed the platform’s current higher-confidence thresholds.
+
+Why it matters:
+- prevents the dashboard from becoming just a giant list of all markets
+- gives a smaller actionable subset
+
+### **Beat Close Count / CLV Proxy**
+Used on the evaluation page.
+
+Why it matters:
+- measures whether the platform found a better number than the later observed market price
+- helps judge whether the process is finding timing advantages, not just random picks
+
+---
+
+## **How to Refresh the Dashboard Data**
+
+Refreshing the Looker page only shows the most recent data already present in BigQuery.
+
+To refresh the actual underlying data:
+1. run the ingestion pipeline or Kestra flow
+2. reload raw market tables into BigQuery
+3. run `dbt run`
+4. refresh Looker Studio
+
+For a manual one-click refresh, use the Kestra market refresh flow.
 
 ---
 
 ## **Development Notes**
 
-### **Orchestration Notes**
-Kestra runs inside its own container, so local assumptions do not always carry over. Two important differences:
+### **The Odds API Design Change**
+The platform moved away from relying on simulated odds as the main source and now uses:
+- `/events`
+- `/odds`
+- `/scores`
 
-- `source .venv/bin/activate` fails because Kestra shell tasks use `sh`, not `bash`
-- `localhost` inside Kestra refers to the Kestra container itself, not PostgreSQL
+This was the key shift that made the dashboard useful for live and pre-game market analysis.
 
-That means:
-- use direct Python execution inside the task
-- use `POSTGRES_HOST=sportsbook_postgres` for container-to-container access
+### **Bulk Odds Endpoint Can Return Empty**
+One issue encountered was that the bulk odds endpoint sometimes returned no events even though the API request was technically valid. The loader was updated to fall back to:
+- fetch current event IDs from `/events`
+- then call `/events/{eventId}/odds`
 
-### **Google Credentials in Kestra**
-BigQuery loading from Kestra requires Google credentials **inside the container**, not just on your laptop. The reliable approach is:
-- mount `application_default_credentials.json` into the container
+This made odds ingestion much more reliable.
+
+### **Kestra Environment Variables**
+A major issue was that `THE_ODDS_API_KEY` was missing from `docker-compose.kestra.yml`, so flows worked locally but not from inside the Kestra container. The fix was to explicitly pass:
+- `THE_ODDS_API_KEY`
+- `THE_ODDS_SPORT`
+- `THE_ODDS_REGIONS`
+- `THE_ODDS_MARKETS`
+
+into the Kestra service environment.
+
+### **Kestra vs Local Postgres Host**
+Another key issue was that:
+- local scripts needed `POSTGRES_HOST=localhost`
+- Kestra flows needed `POSTGRES_HOST=sportsbook_postgres`
+
+This is because `localhost` inside a container points to the container itself, not the Postgres service.
+
+### **Kestra Shell Behavior**
+Kestra shell tasks use `sh`, not `bash`, so:
+- `source .venv/bin/activate` failed
+- direct `python3 -m ...` execution was more reliable
+
+### **Google Credentials Inside Kestra**
+BigQuery loads worked locally but initially failed inside Kestra because the container did not have Google ADC mounted. The fix was:
+- mount `application_default_credentials.json`
 - set `GOOGLE_APPLICATION_CREDENTIALS` in `docker-compose.kestra.yml`
 
-Without this, BigQuery client creation fails even if `bq` works locally.
+### **dbt in Kestra Needed Its Own Profile**
+The Kestra dbt task failed until a `profiles.yml` was created inside the container. The flow was updated to create `/root/.dbt/profiles.yml` before running `dbt run`.
 
-### **BallDontLie API Notes**
-The correct API base is:
-- `https://api.balldontlie.io/v1/games`
+### **Looker Field Type Issues**
+Several Looker charts initially failed because numeric odds fields were interpreted incorrectly:
+- odds fields were mis-typed as date-like fields
+- some price fields were aggregated as Count Distinct instead of Min/Max/Number values
 
-Important details:
-- the old `www.balldontlie.io/api/v1/...` route returned `404`
-- the current API requires an `Authorization` header and API key after creating an account
-- missing or invalid API keys cause `401 Unauthorized`
+Fixing the data source field types and metric aggregations resolved the display issues.
 
 ### **BigQuery Load Method**
-`google-cloud-bigquery`'s `load_table_from_dataframe()` requires `pyarrow`, which caused repeated install and hash problems in the Kestra container. The project avoids that by:
-- exporting the pandas DataFrame to a temporary CSV
-- loading with `load_table_from_file()`
+`load_table_from_dataframe()` introduced `pyarrow` dependency problems in the container. The project now uses:
+- temporary CSV export
+- `load_table_from_file()`
 
-This makes the pipeline more stable and easier to reproduce across environments.
+This was much more stable in both local and Kestra contexts.
 
 ### **dbt Project Path**
-A major gotcha is running dbt from the wrong folder.
-
-Use:
+Another repeated issue was running dbt from the wrong folder. The correct path is always:
 
 ```bash
 cd dbt/sportsbook_dbt
-dbt run
 ```
 
-Do **not** run dbt from an unintended duplicate project folder, or dbt may rebuild default boilerplate models instead of the sportsbook models.
-
-### **Container Networking**
-For the local multi-container stack to work cleanly:
-- PostgreSQL, Kafka, Zookeeper, and Kestra should share the same Docker network
-- service names, not localhost, should be used for inter-container communication
-
-### **Cost / Read Performance**
-The model strategy is intentionally simple:
-- **raw tables** store loaded source data
-- **staging models** are views used for cleanup and standardization
-- **mart and aggregate models** are tables used by Looker Studio
-
-This keeps dashboard reads fast because the BI layer reads from already-aggregated BigQuery tables rather than scanning raw event tables every time.
+Running dbt elsewhere can build the wrong models or old boilerplate tables.
 
 ---
 
-## **Troubleshooting Tips**
+## **Troubleshooting**
 
-### **If Kestra says `source: not found`**
-Kestra shell tasks use `sh`, not `bash`. Do not rely on `source .venv/bin/activate`.
-
-### **If Kestra cannot reach Postgres**
+### **If odds rows load as 0**
 Check:
-- shared Docker network exists
-- `POSTGRES_HOST=sportsbook_postgres`
-- password matches the actual running PostgreSQL container
+- whether the bulk `/odds` endpoint is currently empty
+- whether the event-level odds fallback is working
+- whether `THE_ODDS_API_KEY` exists in the Kestra container env
 
-### **If BigQuery auth fails in Kestra**
+### **If Kestra can’t talk to Postgres**
 Check:
-- ADC file is mounted into the container
-- `GOOGLE_APPLICATION_CREDENTIALS` points to it
-- `gcloud auth application-default login` was completed locally first
+- `POSTGRES_HOST=sportsbook_postgres` in Kestra
+- that all containers share the same Docker network
+- that the container password matches the real Postgres password
 
-### **If BallDontLie returns 401**
+### **If dbt fails inside Kestra**
 Check:
-- `BALLDONTLIE_API_KEY` is present in `.env`
-- the same key is available in Kestra container env
-- the request uses the current API domain and authorization header
+- `/root/.dbt/profiles.yml` exists
+- Google ADC is mounted
+- the dbt task is running from `/workspace/dbt/sportsbook_dbt`
 
-### **If dbt builds boilerplate models**
-You are almost certainly running dbt from the wrong folder.
-
-Use:
-
-```bash
-cd dbt/sportsbook_dbt
-```
-
-### **If Looker tables do not appear**
-Make sure you are connecting Looker Studio to the **aggregate tables**, not the raw or staging layers.
+### **If Looker does not show a table**
+Check:
+- the model exists in BigQuery
+- the data source has been refreshed
+- numeric odds fields are not using Count Distinct aggregation
+- you are using the curated aggregate models, not raw tables
 
 ---
 
 ## **Current Scope**
 
-### **Included in MVP**
-- NBA data only
-- real NBA schedule/game ingestion
-- simulated live betting events
-- simulated odds and game update streams
-- Kafka event ingestion
-- PostgreSQL source/event storage
-- BigQuery warehouse models
-- dbt marts and aggregate tables
-- Kestra orchestration
-- Looker Studio dashboards
+### **Included in the current platform**
+- real NBA event ingestion
+- real bookmaker odds ingestion
+- real score ingestion
+- BigQuery raw market tables
+- dbt market board and evaluation models
+- manual Kestra refresh flow
+- Looker Studio dashboard with live and pre-game views
 
-### **Planned Expansion**
-- additional sports leagues
-- richer bet types
-- true live odds API integration
-- more advanced observability
-- CI/CD validation
-- dbt tests and documentation expansion
-- stronger governance and lineage docs
+### **Still intentionally limited**
+- no fully finished AI reasoning layer yet
+- no paid historical odds snapshots yet
+- no automatic high-frequency refresh schedule yet
+- no productionized closing-line logic beyond current proxy approach
+
+### **Planned next improvements**
+- improve suggestion logic beyond fixed edge assumptions
+- tighten EV and vig modeling
+- add better game-state freshness controls
+- add automated refresh scheduling
+- add historical odds snapshots if moving to a paid tier

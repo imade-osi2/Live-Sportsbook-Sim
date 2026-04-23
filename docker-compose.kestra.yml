@@ -24,6 +24,10 @@ services:
       GCS_BUCKET: de26-live-sportsbook-bucket
       BIGQUERY_DATASET: de26_sportsbook_analytics
       BALLDONTLIE_API_KEY: ${BALLDONTLIE_API_KEY}
+      THE_ODDS_API_KEY: ${THE_ODDS_API_KEY}
+      THE_ODDS_SPORT: ${THE_ODDS_SPORT}
+      THE_ODDS_REGIONS: ${THE_ODDS_REGIONS}
+      THE_ODDS_MARKETS: ${THE_ODDS_MARKETS}
       GOOGLE_APPLICATION_CREDENTIALS: /root/.config/gcloud/application_default_credentials.json
       KESTRA_CONFIGURATION: |
         kestra:
