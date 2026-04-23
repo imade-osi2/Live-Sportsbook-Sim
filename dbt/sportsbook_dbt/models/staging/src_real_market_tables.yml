@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw_market
+    database: de26-live-sportsbook-sim
+    schema: de26_sportsbook_analytics
+    tables:
+      - name: raw_nba_events_api
+      - name: raw_nba_odds_api
+      - name: raw_nba_scores_api
