@@ -489,44 +489,9 @@ BigQuery loads worked locally but initially failed inside Kestra because the con
 - mount `application_default_credentials.json`
 - set `GOOGLE_APPLICATION_CREDENTIALS` in `docker-compose.kestra.yml`
 
-### **dbt in Kestra Needed Its Own Profile**
-The Kestra dbt task failed until a `profiles.yml` was created inside the container. The flow was updated to create `/root/.dbt/profiles.yml` before running `dbt run`.
-
-### **Looker Field Type Issues**
-Several Looker charts initially failed because numeric odds fields were interpreted incorrectly:
-- odds fields were mis-typed as date-like fields
-- some price fields were aggregated as Count Distinct instead of Min/Max/Number values
-
-Fixing the data source field types and metric aggregations resolved the display issues.
-
-### **BigQuery Load Method**
-`load_table_from_dataframe()` introduced `pyarrow` dependency problems in the container. The project now uses:
-- temporary CSV export
-- `load_table_from_file()`
-
-This was much more stable in both local and Kestra contexts.
-
-### **dbt Project Path**
-Another repeated issue was running dbt from the wrong folder. The correct path is always:
-
-```bash
-cd dbt/sportsbook_dbt
-```
-
-Running dbt elsewhere can build the wrong models or old boilerplate tables.
-
 ---
 
 ## **Current Scope**
-
-### **Included in the current platform**
-- real NBA event ingestion
-- real bookmaker odds ingestion
-- real score ingestion
-- BigQuery raw market tables
-- dbt market board and evaluation models
-- manual Kestra refresh flow
-- Looker Studio dashboard with live and pre-game views
 
 ### **Still intentionally limited**
 - no fully finished AI reasoning layer yet
