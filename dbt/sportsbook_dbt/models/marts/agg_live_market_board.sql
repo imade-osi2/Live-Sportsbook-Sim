@@ -44,7 +44,7 @@ select
     e.matchup,
     case
         when s.completed = true then 'final'
-        when e.commence_time <= current_timestamp() and s.completed = false then 'live'
+        when s.last_update is not null and s.completed = false then 'live'
         else 'pregame'
     end as game_state,
     s.home_score,
