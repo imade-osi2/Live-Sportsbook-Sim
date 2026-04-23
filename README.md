@@ -432,48 +432,6 @@ This board gives a structured summary of why a matchup looks interesting from a 
 
 ---
 
-## **Useful Betting Metrics in the Dashboard**
-
-The dashboard is intentionally centered on practical market metrics instead of generic BI-only stats.
-
-### **Latest H2H Price by Bookmaker**
-Used to compare the current market price for each team across books.
-
-Why it matters:
-- helps identify the best available number
-- shows whether a side is drifting or strengthening across books
-- supports line-shopping logic
-
-### **Best Expected Value**
-Used on the research and suggested bets views.
-
-Why it matters:
-- summarizes the strongest current opportunity at the game level
-- helps prioritize which games deserve manual review
-
-### **Edge**
-Represents the platform’s current difference between estimated fair probability and implied probability.
-
-Why it matters:
-- acts as a quick ranking measure for opportunity strength
-- helps separate weak market noise from stronger signals
-
-### **High-Confidence Suggestions**
-Count of suggestions that passed the platform’s current higher-confidence thresholds.
-
-Why it matters:
-- prevents the dashboard from becoming just a giant list of all markets
-- gives a smaller actionable subset
-
-### **Beat Close Count / CLV Proxy**
-Used on the evaluation page.
-
-Why it matters:
-- measures whether the platform found a better number than the later observed market price
-- helps judge whether the process is finding timing advantages, not just random picks
-
----
-
 ## **How to Refresh the Dashboard Data**
 
 Refreshing the Looker page only shows the most recent data already present in BigQuery.
@@ -556,35 +514,6 @@ cd dbt/sportsbook_dbt
 ```
 
 Running dbt elsewhere can build the wrong models or old boilerplate tables.
-
----
-
-## **Troubleshooting**
-
-### **If odds rows load as 0**
-Check:
-- whether the bulk `/odds` endpoint is currently empty
-- whether the event-level odds fallback is working
-- whether `THE_ODDS_API_KEY` exists in the Kestra container env
-
-### **If Kestra can’t talk to Postgres**
-Check:
-- `POSTGRES_HOST=sportsbook_postgres` in Kestra
-- that all containers share the same Docker network
-- that the container password matches the real Postgres password
-
-### **If dbt fails inside Kestra**
-Check:
-- `/root/.dbt/profiles.yml` exists
-- Google ADC is mounted
-- the dbt task is running from `/workspace/dbt/sportsbook_dbt`
-
-### **If Looker does not show a table**
-Check:
-- the model exists in BigQuery
-- the data source has been refreshed
-- numeric odds fields are not using Count Distinct aggregation
-- you are using the curated aggregate models, not raw tables
 
 ---
 
