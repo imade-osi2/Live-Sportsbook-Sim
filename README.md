@@ -337,12 +337,12 @@ The dashboard is publicly accessible at:
 https://datastudio.google.com/reporting/e96ea5f4-9ab8-47f7-b99f-5f9e9b22c042
 
 The current dashboard presents a sportsbook-style operating view built around live and pre-game odds rather than raw ingestion tables. Current top-line metrics include:
-- **active_games = 10**
-- **bookmakers_tracked = 9**
-- **total_suggestions = 506**
-- **avg_expected_value = 0.03**
-- **avg_edge = 0.01**
-- **high_confidence_suggestions = 41**
+- **active_games **
+- **bookmakers_tracked **
+- **total_suggestions **
+- **avg_expected_value **
+- **avg_edge **
+- **high_confidence_suggestions **
 
 ---
 
