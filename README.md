@@ -274,7 +274,6 @@ GCP_PROJECT_ID=your_gcp_project_id
 GCS_BUCKET=your_bucket_name
 BIGQUERY_DATASET=de26_sportsbook_analytics
 
-BALLDONTLIE_API_KEY=your_balldontlie_key
 THE_ODDS_API_KEY=your_the_odds_api_key
 THE_ODDS_SPORT=basketball_nba
 THE_ODDS_REGIONS=us
