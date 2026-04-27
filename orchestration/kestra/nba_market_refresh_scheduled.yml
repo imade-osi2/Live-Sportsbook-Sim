@@ -1,0 +1,88 @@
+id: nba_market_refresh_scheduled
+namespace: sportsbook
+
+triggers:
+  - id: every_20_minutes
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "*/20 * * * *"
+
+tasks:
+  - id: load_nba_events_api
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - cd /workspace
+      - pip install --no-cache-dir requests python-dotenv psycopg2-binary
+    commands:
+      - |
+        HOUR=$(date +%H)
+        MINUTE=$(date +%M)
+
+        # only refresh events every 6 hours, at minute 00
+        if [ "$MINUTE" = "00" ] && ([ "$HOUR" = "00" ] || [ "$HOUR" = "06" ] || [ "$HOUR" = "12" ] || [ "$HOUR" = "18" ]); then
+          python3 -m ingestion.batch_jobs.load_nba_events_api
+        else
+          echo "Skipping events refresh this cycle"
+        fi
+
+  - id: load_nba_odds_api
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - cd /workspace
+      - pip install --no-cache-dir requests python-dotenv psycopg2-binary
+    commands:
+      - python3 -m ingestion.batch_jobs.load_nba_odds_api
+
+  - id: load_nba_scores_api
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - cd /workspace
+      - pip install --no-cache-dir requests python-dotenv psycopg2-binary
+    commands:
+      - |
+        MINUTE=$(date +%M)
+
+        # only refresh scores every 20-minute cycle here
+        # if you want more frequent scores later, split into a separate 5-minute flow
+        python3 -m ingestion.batch_jobs.load_nba_scores_api
+
+  - id: load_nba_market_tables_to_bigquery
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - cd /workspace
+      - pip install --no-cache-dir pandas python-dotenv psycopg2-binary google-cloud-bigquery google-cloud-storage
+    commands:
+      - python3 -m ingestion.batch_jobs.load_nba_market_tables_to_bigquery
+
+  - id: dbt_run_market_models
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - mkdir -p /root/.dbt
+      - |
+        cat > /root/.dbt/profiles.yml <<'EOF'
+        sportsbook_dbt:
+          target: dev
+          outputs:
+            dev:
+              type: bigquery
+              method: oauth
+              project: de26-live-sportsbook-sim
+              dataset: de26_sportsbook_analytics
+              threads: 4
+              job_execution_timeout_seconds: 300
+              location: US
+              priority: interactive
+        EOF
+      - cd /workspace/dbt/sportsbook_dbt
+      - pip install --no-cache-dir dbt-bigquery
+    commands:
+      - dbt run --profiles-dir /root/.dbt
