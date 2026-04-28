@@ -2,7 +2,7 @@
 
 ---
 
-A production-style data engineering project that ingests real NBA events, bookmaker odds, and score data, transforms them into analytics-ready warehouse models, and publishes a live sportsbook-style reporting layer in Looker Studio.
+A production-style data engineering project that ingests real NBA events, bookmaker odds, and score data, transforms them into analytics-ready warehouse models, and publishes a live and pregame sportsbook-style reporting layer in Looker Studio.
 
 The platform supports **two complementary pipeline paths**:
 
