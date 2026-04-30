@@ -20,7 +20,7 @@ This lets the repo show both:
 
 ## **Project Goal**
 
-This project demonstrates a real-world sports data platform that combines:
+This project demonstrates a real-world sports data platform for live and pre-game odds that combines:
 
 - **real NBA event data**
 - **real bookmaker odds**
