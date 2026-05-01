@@ -1,3 +1,9 @@
+{{ config(
+    materialized='table',
+    partition_by={"field": "game_date", "data_type": "date"},
+    cluster_by=["event_id", "bookmaker_title", "market_key", "confidence_tier"]
+) }}
+
 with market_prices as (
     select
         event_id,

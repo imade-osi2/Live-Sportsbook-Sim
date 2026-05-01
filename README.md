@@ -60,6 +60,23 @@ The focus is not on real bettor wager feeds. Instead, the platform is designed t
 
 The platform combines API ingestion, local storage, streaming simulation, cloud warehousing, analytics engineering, orchestration, and BI delivery.
 
+## **Data Layers**
+
+### **1. Ingestion Layer**
+Raw data pulled from The Odds API and local Kafka event streams, first stored in PostgreSQL.
+
+### **2. Warehouse Raw Layer**
+Raw source tables loaded into BigQuery with minimal reshaping.
+
+### **3. Staging Layer**
+dbt views that standardize field names, cast types, and prepare data for downstream joins.
+
+### **4. Mart Layer**
+dbt tables that model core business entities such as events, odds history, scores, suggestions, and evaluation.
+
+### **5. Dashboard Layer**
+Looker Studio reads curated aggregate tables designed for sportsbook-style monitoring and evaluation.
+
 ### **High-Level Flow**
 
 #### **Path A — Manual Batch Market Refresh**

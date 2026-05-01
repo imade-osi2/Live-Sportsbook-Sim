@@ -1,3 +1,9 @@
+{{ config(
+    materialized='table',
+    partition_by={"field": "last_update", "data_type": "timestamp", "granularity": "day"},
+    cluster_by=["event_id", "completed"]
+) }}
+
 select
     score_record_id,
     event_id,
