@@ -1,8 +1,24 @@
-# **Live & Pre-Game Sports Betting Analytics Platform**
+# **Live & Pre-Game Sports Betting Market Intelligence Platform**
+
+A production-style data engineering project that ingests real NBA events, bookmaker odds, and score data, transforms them into analytics-ready warehouse models, and publishes a sportsbook-style market intelligence dashboard in Looker Studio.
+
+The goal is not just to display odds. The goal is to centralize fast-moving betting market data into one system that helps compare prices across books, track line movement, surface candidate value opportunities, and evaluate whether a betting process can beat later market prices.
 
 ---
 
-A production-style data engineering project that ingests real NBA events, bookmaker odds, and score data, transforms them into analytics-ready warehouse models, and publishes a live and pregame sportsbook-style reporting layer in Looker Studio.
+## **Business Problem**
+
+Sports betting markets are fragmented across bookmakers and move quickly. It is difficult to compare prices, monitor line movement, and determine whether a recommendation actually beat the market or beat closing price after vig.
+
+## **Solution**
+
+This platform centralizes real event, odds, and score data into one warehouse and dashboard layer that helps:
+
+- monitor current prices across bookmakers
+- compare the best and worst available numbers
+- surface candidate value opportunities
+- evaluate whether suggested prices beat later observed market prices
+- support both pre-game and live market analysis
 
 The platform supports **two complementary pipeline paths**:
 
