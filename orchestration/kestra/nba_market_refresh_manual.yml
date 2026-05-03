@@ -1,0 +1,68 @@
+id: nba_market_refresh_manual
+namespace: sportsbook
+
+tasks:
+  - id: load_nba_events_api
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - cd /workspace
+      - pip install --no-cache-dir requests python-dotenv psycopg2-binary
+    commands:
+      - python3 -m ingestion.batch_jobs.load_nba_events_api
+
+  - id: load_nba_odds_api
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - cd /workspace
+      - pip install --no-cache-dir requests python-dotenv psycopg2-binary
+    commands:
+      - python3 -m ingestion.batch_jobs.load_nba_odds_api
+
+  - id: load_nba_scores_api
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - cd /workspace
+      - pip install --no-cache-dir requests python-dotenv psycopg2-binary
+    commands:
+      - python3 -m ingestion.batch_jobs.load_nba_scores_api
+
+  - id: load_nba_market_tables_to_bigquery
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - cd /workspace
+      - pip install --no-cache-dir pandas python-dotenv psycopg2-binary google-cloud-bigquery google-cloud-storage
+    commands:
+      - python3 -m ingestion.batch_jobs.load_nba_market_tables_to_bigquery
+
+  - id: dbt_run_manual_models
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    beforeCommands:
+      - mkdir -p /root/.dbt
+      - |
+        cat > /root/.dbt/profiles.yml <<'EOF'
+        sportsbook_dbt:
+          target: dev
+          outputs:
+            dev:
+              type: bigquery
+              method: oauth
+              project: de26-live-sportsbook-sim
+              dataset: de26_sportsbook_analytics
+              threads: 4
+              location: US
+              priority: interactive
+        EOF
+      - cd /workspace/dbt/sportsbook_dbt
+      - pip install --no-cache-dir dbt-bigquery
+    commands:
+      - dbt run --profiles-dir /root/.dbt --select agg_platform_kpis agg_best_price_by_outcome agg_live_market_board agg_clv_kpis agg_suggested_bets_board fact_bet_evaluation agg_research_board
