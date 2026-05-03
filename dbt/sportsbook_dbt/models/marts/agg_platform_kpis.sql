@@ -1,3 +1,5 @@
+{{ config(materialized='table') }}
+
 with suggestion_stats as (
     select
         count(*) as total_suggestions,
@@ -11,7 +13,14 @@ evaluation_stats as (
     select
         sum(case when bet_result = 'win' then 1 else 0 end) as total_wins,
         sum(case when bet_result = 'loss' then 1 else 0 end) as total_losses,
-        sum(case when clv_result = 'beat_close' then 1 else 0 end) as beat_close_count
+        sum(case when clv_result = 'beat_close' then 1 else 0 end) as beat_close_count,
+        round(
+            safe_divide(
+                sum(case when clv_result = 'beat_close' then 1 else 0 end),
+                count(*)
+            ),
+            4
+        ) as beat_close_pct
     from {{ ref('fact_bet_evaluation') }}
 ),
 
@@ -31,7 +40,8 @@ select
     round(s.avg_edge, 4) as avg_edge,
     e.total_wins,
     e.total_losses,
-    e.beat_close_count
+    e.beat_close_count,
+    e.beat_close_pct
 from market_stats m
 cross join suggestion_stats s
 cross join evaluation_stats e
