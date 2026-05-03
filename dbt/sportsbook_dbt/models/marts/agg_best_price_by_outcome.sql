@@ -4,28 +4,31 @@
     cluster_by=["event_id", "market_key", "outcome_name"]
 ) }}
 
+
 with ranked_prices as (
     select
-        event_id,
-        game_date,
-        commence_time,
-        matchup,
-        game_state,
-        market_key,
-        outcome_name,
-        bookmaker_title,
-        price,
-        point,
-        last_update,
+        a.event_id,
+        a.game_date,
+        a.commence_time,
+        a.matchup,
+        lmb.game_state,
+        a.market_key,
+        a.outcome_name,
+        a.bookmaker_title,
+        a.price,
+        a.point,
+        a.last_update,
         row_number() over (
-            partition by event_id, market_key, outcome_name
-            order by price desc
+            partition by a.event_id, a.market_key, a.outcome_name
+            order by a.price desc
         ) as best_price_rank,
         row_number() over (
-            partition by event_id, market_key, outcome_name
-            order by price asc
-        ) as worst_price_rank
-    from {{ ref('agg_latest_real_odds_by_game') }}
+            partition by a.event_id, a.market_key, a.outcome_name
+            order by a.price asc
+        ) as worst_price_rankgit
+    from {{ ref('agg_latest_real_odds_by_game') }} a
+    left join {{ ref('agg_live_market_board') }} lmb
+        on a.event_id = lmb.event_id
 ),
 
 best_prices as (
