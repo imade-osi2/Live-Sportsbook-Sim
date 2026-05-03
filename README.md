@@ -37,7 +37,7 @@ This project builds an end-to-end data platform that:
 
 The dashboard is designed to look like the reference below and will remain organized into fixed sections so the reporting experience stays clean and repeatable.
 
-![Final Dashboard Reference](docs/images/final_dashboard_reference.png)
+![Final Dashboard Reference](./docs/images/final_dashboard_reference.png)
 
 ### Dashboard Layout
 
@@ -74,7 +74,7 @@ The dashboard is designed to look like the reference below and will remain organ
 
 The platform follows the architecture shown below.
 
-![Data Pipeline Overview](docs/images/data_pipeline_overview.png)
+![Data Pipeline Overview](./docs/images/data_pipeline_overview.png)
 
 ---
 
