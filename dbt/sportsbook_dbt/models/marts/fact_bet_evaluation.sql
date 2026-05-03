@@ -1,7 +1,7 @@
 {{ config(
     materialized='table',
     partition_by={"field": "game_date", "data_type": "date"},
-    cluster_by=["event_id", "bookmaker_title", "market_key",  "bet_result"]
+    cluster_by=["event_id", "bookmaker_title", "market_key", "bet_result"]
 ) }}
 
 select

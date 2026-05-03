@@ -1,3 +1,9 @@
+{{ config(
+    materialized='table',
+    partition_by={"field": "last_update", "data_type": "timestamp", "granularity": "day"},
+    cluster_by=["event_id", "bookmaker_title", "market_key"]
+) }}
+
 select
     odds_record_id,
     event_id,
