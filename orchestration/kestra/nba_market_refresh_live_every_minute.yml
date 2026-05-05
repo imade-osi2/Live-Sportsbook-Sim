@@ -1,5 +1,10 @@
-id: nba_market_refresh_manual
+id: nba_market_refresh_live_every_minute
 namespace: sportsbook
+
+triggers:
+  - id: every_minute
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 * * * * ?"
 
 tasks:
   - id: load_nba_events_api
@@ -42,7 +47,7 @@ tasks:
     commands:
       - python3 -m ingestion.batch_jobs.load_nba_market_tables_to_bigquery
 
-  - id: dbt_run_manual_models
+  - id: dbt_run_live_models
     type: io.kestra.plugin.scripts.shell.Commands
     taskRunner:
       type: io.kestra.plugin.core.runner.Process
@@ -65,4 +70,4 @@ tasks:
       - cd /workspace/dbt/sportsbook_dbt
       - pip install --no-cache-dir dbt-bigquery
     commands:
-      - dbt run --profiles-dir /root/.dbt --select dim_events fact_real_odds_history fact_real_scores agg_latest_real_odds_by_game agg_live_market_board agg_live_game_metrics agg_best_price_by_outcome fact_bet_suggestions agg_suggested_bets_board fact_bet_evaluation agg_clv_kpis agg_platform_kpis agg_research_board
+      - dbt run --profiles-dir /root/.dbt --select dim_events fact_real_odds_history fact_real_scores agg_latest_real_odds_by_game agg_live_market_board agg_live_game_metrics agg_best_price_by_outcome fact_bet_suggestions agg_suggested_bets_board

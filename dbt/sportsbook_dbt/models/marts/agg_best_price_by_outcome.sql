@@ -25,7 +25,7 @@ with ranked_prices as (
         row_number() over (
             partition by a.event_id, a.market_key, a.outcome_name
             order by a.price asc
-        ) as worst_price_rankgit
+        ) as worst_price_rank
     from {{ ref('agg_latest_real_odds_by_game') }} a
     left join {{ ref('agg_live_market_board') }} lmb
         on a.event_id = lmb.event_id
