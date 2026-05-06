@@ -1,7 +1,7 @@
 select
     event_id,
     game_date,
-    commence_time,
+    commence_time_et,
     matchup,
     game_state,
     bookmaker_title,
