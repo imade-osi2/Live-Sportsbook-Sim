@@ -4,48 +4,60 @@
     cluster_by=["event_id", "market_key", "outcome_name"]
 ) }}
 
-
-with ranked_prices as (
+with latest_prices as (
     select
-        a.event_id,
-        a.game_date,
-        a.commence_time,
-        a.matchup,
-        lmb.game_state,
-        a.market_key,
-        a.outcome_name,
-        a.bookmaker_title,
-        a.price,
-        a.point,
-        a.last_update,
+        event_id,
+        game_date,
+        commence_time_et,
+        matchup,
+        case
+            when game_date = current_date("America/New_York") then 'today'
+            when game_date = date_add(current_date("America/New_York"), interval 1 day) then 'tomorrow'
+            else 'other'
+        end as slate_bucket,
+        market_key,
+        outcome_name,
+        bookmaker_title,
+        price,
+        point,
+        case
+            when price < 0 then abs(price) / (abs(price) + 100.0)
+            else 100.0 / (price + 100.0)
+        end as implied_prob
+    from {{ ref('agg_latest_real_odds_by_game') }}
+    where game_date between current_date("America/New_York")
+                      and date_add(current_date("America/New_York"), interval 1 day)
+),
+
+ranked as (
+    select
+        *,
         row_number() over (
-            partition by a.event_id, a.market_key, a.outcome_name
-            order by a.price desc
-        ) as best_price_rank,
+            partition by event_id, market_key, outcome_name
+            order by price desc
+        ) as best_rank,
         row_number() over (
-            partition by a.event_id, a.market_key, a.outcome_name
-            order by a.price asc
-        ) as worst_price_rank
-    from {{ ref('agg_latest_real_odds_by_game') }} a
-    left join {{ ref('agg_live_market_board') }} lmb
-        on a.event_id = lmb.event_id
+            partition by event_id, market_key, outcome_name
+            order by price asc
+        ) as worst_rank
+    from latest_prices
 ),
 
 best_prices as (
     select
         event_id,
         game_date,
-        commence_time,
+        commence_time_et,
         matchup,
-        game_state,
+        slate_bucket,
         market_key,
         outcome_name,
         bookmaker_title as best_bookmaker,
         price as best_price,
         point as best_point,
-        last_update as best_price_last_update
-    from ranked_prices
-    where best_price_rank = 1
+        implied_prob as best_implied_prob
+    from ranked
+    where best_rank = 1
 ),
 
 worst_prices as (
@@ -54,17 +66,18 @@ worst_prices as (
         market_key,
         outcome_name,
         bookmaker_title as worst_bookmaker,
-        price as worst_price
-    from ranked_prices
-    where worst_price_rank = 1
+        price as worst_price,
+        implied_prob as worst_implied_prob
+    from ranked
+    where worst_rank = 1
 )
 
 select
     b.event_id,
     b.game_date,
-    b.commence_time,
+    b.commence_time_et,
     b.matchup,
-    b.game_state,
+    b.slate_bucket,
     b.market_key,
     b.outcome_name,
     b.best_bookmaker,
@@ -73,7 +86,7 @@ select
     w.worst_bookmaker,
     w.worst_price,
     b.best_price - w.worst_price as price_gap,
-    b.best_price_last_update
+    round(abs(b.best_implied_prob - w.worst_implied_prob) * 100, 2) as implied_prob_gap_pp
 from best_prices b
 left join worst_prices w
     on b.event_id = w.event_id

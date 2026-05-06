@@ -65,4 +65,4 @@ tasks:
       - cd /workspace/dbt/sportsbook_dbt
       - pip install --no-cache-dir dbt-bigquery
     commands:
-      - dbt run --profiles-dir /root/.dbt --select dim_events fact_real_odds_history fact_real_scores agg_latest_real_odds_by_game agg_live_market_board agg_live_game_metrics agg_best_price_by_outcome fact_bet_suggestions agg_suggested_bets_board fact_bet_evaluation agg_clv_kpis agg_platform_kpis agg_research_board
+      - dbt run --profiles-dir /root/.dbt --select dim_events agg_latest_real_odds_by_game agg_live_market_board agg_live_game_metrics agg_best_price_by_outcome agg_best_price_gap_by_market agg_live_vs_pregame_market_mix agg_bookmaker_edge_opportunities agg_signals_by_confidence fact_bet_suggestions fact_bet_evaluation agg_clv_trend agg_clv_kpis agg_platform_kpis agg_suggested_bets_board

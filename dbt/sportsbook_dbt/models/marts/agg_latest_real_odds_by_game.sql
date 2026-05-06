@@ -6,31 +6,32 @@
 
 with ranked as (
     select
-        event_id,
-        commence_time,
-        home_team,
-        away_team,
-        concat(home_team, ' vs ', away_team) as matchup,
-        bookmaker_title,
-        market_key,
-        outcome_name,
-        price,
-        point,
-        last_update,
+        o.event_id,
+        date(o.commence_time, "America/New_York") as game_date,
+        datetime(o.commence_time, "America/New_York") as commence_time_et,
+        concat(o.away_team, ' vs ', o.home_team) as matchup,
+        o.home_team,
+        o.away_team,
+        o.bookmaker_title,
+        o.market_key,
+        o.outcome_name,
+        o.price,
+        o.point,
+        o.last_update,
         row_number() over (
-            partition by event_id, bookmaker_title, market_key, outcome_name
-            order by last_update desc
+            partition by o.event_id, o.bookmaker_title, o.market_key, o.outcome_name
+            order by o.last_update desc
         ) as rn
-    from {{ ref('fact_real_odds_history') }}
+    from {{ ref('fact_real_odds_history') }} o
 )
 
 select
     event_id,
-    date(commence_time) as game_date,
-    commence_time,
+    game_date,
+    commence_time_et,
+    matchup,
     home_team,
     away_team,
-    matchup,
     bookmaker_title,
     market_key,
     outcome_name,

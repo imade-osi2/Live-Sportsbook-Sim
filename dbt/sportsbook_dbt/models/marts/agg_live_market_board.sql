@@ -1,3 +1,5 @@
+{{ config(materialized='table') }}
+
 with latest_scores as (
     select *
     from (
@@ -38,14 +40,18 @@ latest_h2h as (
 select
     e.event_id,
     e.game_date,
-    e.commence_time,
+    e.commence_time_et,
     e.home_team,
     e.away_team,
     e.matchup,
     case
         when s.completed = true then 'final'
-        when s.last_update is not null and s.completed = false then 'live'
-        else 'pregame'
+        when (s.home_score is not null or s.away_score is not null)
+             and timestamp_diff(current_timestamp(), h.last_update, hour) <= 6 then 'live'
+        when e.game_date between current_date("America/New_York")
+                            and date_add(current_date("America/New_York"), interval 1 day)
+             then 'pregame'
+        else 'historical'
     end as game_state,
     s.home_score,
     s.away_score,
@@ -58,3 +64,4 @@ left join latest_scores s
     on e.event_id = s.event_id
 left join latest_h2h h
     on e.event_id = h.event_id
+where h.event_id is not null

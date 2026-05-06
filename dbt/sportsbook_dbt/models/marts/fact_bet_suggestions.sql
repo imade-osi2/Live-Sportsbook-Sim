@@ -8,7 +8,7 @@ with market_prices as (
     select
         event_id,
         game_date,
-        commence_time,
+        commence_time_et,
         matchup,
         game_state,
         bookmaker_title,
@@ -32,7 +32,7 @@ priced as (
     select
         event_id,
         game_date,
-        commence_time,
+        commence_time_et,
         matchup,
         game_state,
         bookmaker_title,
@@ -78,7 +78,7 @@ scored as (
 select
     event_id,
     game_date,
-    commence_time,
+    commence_time_et,
     matchup,
     game_state,
     bookmaker_title,
@@ -104,3 +104,6 @@ select
     end as rationale
 from scored
 where expected_value > 0
+  and game_date between current_date("America/New_York")
+                    and date_add(current_date("America/New_York"), interval 1 day)
+  and game_state in ('pregame', 'live')
