@@ -40,7 +40,7 @@ This project builds an end-to-end data platform that:
 
 The dashboard is designed to look like the reference below and will remain organized into fixed sections so the reporting experience stays clean and repeatable.
 
-![Looker Studio Dashboard](https://datastudio.google.com/u/0/reporting/e96ea5f4-9ab8-47f7-b99f-5f9e9b22c042/page/5VhvF/edit)
+[Looker Studio Dashboard](https://datastudio.google.com/u/0/reporting/e96ea5f4-9ab8-47f7-b99f-5f9e9b22c042/page/5VhvF/edit)
 
 
 ![Final Dashboard Reference](docs/images/final_dashboard_reference.png)
