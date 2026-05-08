@@ -4,7 +4,7 @@ namespace: sportsbook
 triggers:
   - id: every_minute
     type: io.kestra.plugin.core.trigger.Schedule
-    cron: "0 * * * * ?"
+    cron: "* * * * *"
 
 tasks:
   - id: load_nba_events_api
