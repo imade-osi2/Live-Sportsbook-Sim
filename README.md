@@ -1,6 +1,6 @@
 # Live & Pre-Game Sports Betting Market Intelligence Platform
 
-A production-style data engineering capstone that pulls NBA market data from APIs, processes it through a reproducible warehouse pipeline, and delivers a dashboard for **live market monitoring, pregame price comparison, bookmaker edge discovery, and bet evaluation**.
+A production-style data engineering capstone that pulls NBA market data from APIs, processes it through two distinct reproducible warehouse pipeline, and delivers a dashboard for **live market monitoring, pregame price comparison, bookmaker edge discovery, and bet evaluation**.
 
 This version of the project is built around a **fixed dashboard design**, **two Kestra refresh paths**, **codified raw schemas**, and **warehouse optimization through partitioning and clustering** so the platform is both more useful and more production-like.
 
