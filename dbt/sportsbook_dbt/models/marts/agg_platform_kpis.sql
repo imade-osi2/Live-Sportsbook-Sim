@@ -1,12 +1,21 @@
 {{ config(materialized='table') }}
 
-with suggestion_stats as (
+with current_market as (
+    select *
+    from {{ ref('agg_latest_real_odds_by_game') }}
+    where game_date between current_date("America/New_York")
+                        and date_add(current_date("America/New_York"), interval 1 day)
+),
+
+suggestion_stats as (
     select
         count(*) as total_suggestions,
         avg(expected_value) as avg_expected_value,
         avg(edge) as avg_edge,
         sum(case when confidence_tier = 'high' then 1 else 0 end) as high_confidence_suggestions
     from {{ ref('fact_bet_suggestions') }}
+    where game_date between current_date("America/New_York")
+                        and date_add(current_date("America/New_York"), interval 1 day)
 ),
 
 evaluation_stats as (
@@ -22,13 +31,15 @@ evaluation_stats as (
             4
         ) as beat_close_pct
     from {{ ref('fact_bet_evaluation') }}
+    where game_date between current_date("America/New_York")
+                        and date_add(current_date("America/New_York"), interval 1 day)
 ),
 
 market_stats as (
     select
         count(distinct event_id) as active_games,
         count(distinct bookmaker_title) as bookmakers_tracked
-    from {{ ref('agg_latest_real_odds_by_game') }}
+    from current_market
 )
 
 select

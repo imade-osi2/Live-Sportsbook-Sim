@@ -1,3 +1,9 @@
+{{ config(
+    materialized='table',
+    partition_by={"field": "game_date", "data_type": "date"},
+    cluster_by=["event_id", "bookmaker_title", "market_key", "confidence_tier"]
+) }}
+
 select
     event_id,
     game_date,
@@ -18,4 +24,6 @@ select
     last_update
 from {{ ref('fact_bet_suggestions') }}
 where confidence_tier in ('high', 'medium')
-order by expected_value desc, edge desc
+  and game_state in ('pregame', 'live')
+  and game_date between current_date("America/New_York")
+                    and date_add(current_date("America/New_York"), interval 1 day)

@@ -11,9 +11,9 @@ where game_state in ('pregame', 'live')
 group by 1, 2
 order by
     case confidence_tier
-        when 'low' then 1
+        when 'high' then 1
         when 'medium' then 2
-        when 'high' then 3
+        when 'low' then 3
         else 4
     end,
     market_key
