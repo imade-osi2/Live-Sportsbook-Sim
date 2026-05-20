@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sportsbook Market Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="workspace" aria-label="Sportsbook market workspace">
+        <div class="workspace__bar">
+          <div>
+            <p class="eyebrow">Live & pregame market intelligence</p>
+            <h1>Sportsbook Data Console</h1>
+          </div>
+          <a class="dashboard-link" href="https://datastudio.google.com/u/0/reporting/e96ea5f4-9ab8-47f7-b99f-5f9e9b22c042/page/5VhvF/edit" target="_blank" rel="noreferrer">Open dashboard</a>
+        </div>
+
+        <div class="metric-grid">
+          <article>
+            <span>Query layer</span>
+            <strong>BigQuery marts</strong>
+          </article>
+          <article>
+            <span>Refresh mode</span>
+            <strong>Manual + live</strong>
+          </article>
+          <article>
+            <span>Current API state</span>
+            <strong>Quota limited</strong>
+          </article>
+        </div>
+
+        <section class="panel">
+          <p class="eyebrow">Ready searches</p>
+          <div class="prompt-grid">
+            <button type="button" data-prompt="Show me the best prices across books">Best prices</button>
+            <button type="button" data-prompt="Which games have edge right now?">Games with edge</button>
+            <button type="button" data-prompt="Show live games and scores">Live games</button>
+            <button type="button" data-prompt="Give me CLV summary">CLV summary</button>
+            <button type="button" data-prompt="Which bookmakers have the most opportunities?">Bookmaker gaps</button>
+            <button type="button" data-prompt="Show platform KPIs">Platform KPIs</button>
+          </div>
+        </section>
+      </section>
+
+      <aside class="chat" aria-label="Chat with sportsbook data">
+        <div class="chat__header">
+          <div>
+            <p class="eyebrow">Chat sidebar</p>
+            <h2>Ask the data</h2>
+          </div>
+          <span class="status-dot" aria-label="Service online"></span>
+        </div>
+
+        <div id="messages" class="messages" aria-live="polite">
+          <div class="message message--bot">
+            <p>Ask about best prices, pregame odds, live scores, suggested edge, CLV, bookmaker opportunities, or KPIs.</p>
+          </div>
+        </div>
+
+        <form id="chat-form" class="composer">
+          <input id="prompt" name="prompt" type="text" autocomplete="off" placeholder="Ask about odds, games, edge, or CLV">
+          <button type="submit">Send</button>
+        </form>
+      </aside>
+    </main>
+
+    <script src="{{ url_for('static', filename='chat.js') }}"></script>
+  </body>
+</html>
