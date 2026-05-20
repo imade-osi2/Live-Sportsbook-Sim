@@ -598,6 +598,49 @@ For a manual one-click refresh of the real market path, use the Kestra market re
 
 ---
 
+## Cloud Run Chat Sidebar
+
+The `cloudrun_chat/` app is a lightweight Flask service for chatting with the curated BigQuery marts. It is designed as a visual sidebar chatbot rather than a free-form SQL console.
+
+### What it answers
+- best prices across books
+- current edge suggestions
+- live game metrics and scores
+- bookmaker opportunity summaries
+- CLV / beat-close summaries
+- platform KPI summaries
+
+The backend maps prompts to predefined SQL templates against dashboard-ready marts. This keeps the app safe and predictable for demos.
+
+### Local run
+From the project root:
+
+```bash
+cd cloudrun_chat
+../.venv/bin/pip install -r requirements.txt
+GCP_PROJECT_ID=de26-live-sportsbook-sim \
+BIGQUERY_DATASET=de26_sportsbook_analytics \
+BIGQUERY_LOCATION=US \
+../.venv/bin/gunicorn --bind :8080 --workers 1 --threads 8 app:app
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
+
+### Cloud Run deployment intent
+The container is built from `cloudrun_chat/Dockerfile`. The Cloud Run service needs:
+- `GCP_PROJECT_ID`
+- `BIGQUERY_DATASET`
+- `BIGQUERY_LOCATION`
+- a service account with BigQuery read/query permissions
+
+If the Odds API quota is exhausted, current-slate marts may return 0 rows. The chat app should still load and explain that fresh odds data is needed.
+
+---
+
 ## Codified Schema and Reproducibility
 
 Another major improvement is ensuring the raw layer and pipeline setup are reproducible.
@@ -679,4 +722,3 @@ Check:
 - `dbt run` is rerun after stream tables are refreshed
 
 ---
-

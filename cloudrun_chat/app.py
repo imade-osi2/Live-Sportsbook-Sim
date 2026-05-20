@@ -10,6 +10,7 @@ app = Flask(__name__)
 
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID", "de26-live-sportsbook-sim")
 BIGQUERY_DATASET = os.getenv("BIGQUERY_DATASET", "de26_sportsbook_analytics")
+BQ_LOCATION = os.getenv("BIGQUERY_LOCATION", "US")
 DATASET = f"{GCP_PROJECT_ID}.{BIGQUERY_DATASET}"
 
 _client = None
@@ -35,6 +36,10 @@ def rows_to_dicts(rows):
         {key: normalize_value(value) for key, value in dict(row).items()}
         for row in rows
     ]
+
+
+def run_query(sql):
+    return rows_to_dicts(get_client().query(sql, location=BQ_LOCATION).result())
 
 
 def choose_intent(prompt):
@@ -186,6 +191,7 @@ def health():
         {
             "status": "ok",
             "dataset": DATASET,
+            "location": BQ_LOCATION,
         }
     )
 
@@ -208,7 +214,17 @@ def query():
         ), 400
 
     template = QUERY_TEMPLATES[intent]
-    rows = rows_to_dicts(get_client().query(template["sql"]).result())
+    try:
+        rows = run_query(template["sql"])
+    except Exception:
+        app.logger.exception("BigQuery chat query failed for intent=%s", intent)
+        return jsonify(
+            {
+                "error": "The chat route matched your question, but BigQuery could not return results. Check Cloud Run service account permissions, dataset config, and whether dbt has built the mart.",
+                "intent": intent,
+                "title": template["title"],
+            }
+        ), 502
 
     return jsonify(
         {
