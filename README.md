@@ -167,7 +167,7 @@ dbt views that standardize field names, cast types, and prepare data for downstr
 dbt tables that model core business entities such as events, odds history, scores, suggestions, and evaluation.
 
 ### 5. Dashboard Layer
-Looker Studio reads curated aggregate tables designed for sportsbook-style monitoring and evaluation.
+Looker Studio reads curated aggregate tables designed for the sportsbook-style monitoring and evaluation.
 
 ---
 
