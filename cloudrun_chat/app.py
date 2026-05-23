@@ -198,7 +198,14 @@ def health():
 
 @app.post("/query")
 def query():
-    body = request.get_json(force=True)
+    if not request.is_json:
+        return jsonify({"error": "Request body must be a JSON object."}), 400
+
+    parsed_body = request.get_json(silent=True)
+    body = parsed_body if parsed_body is not None else {}
+    if not isinstance(body, dict):
+        return jsonify({"error": "Request body must be a JSON object."}), 400
+
     prompt = body.get("prompt", "").strip()
 
     if not prompt:
