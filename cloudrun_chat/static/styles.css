@@ -147,6 +147,13 @@ h2 {
   outline: none;
 }
 
+.prompt-grid button:disabled,
+.composer button:disabled,
+.composer input:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
 .chat {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;

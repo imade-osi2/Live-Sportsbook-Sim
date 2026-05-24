@@ -2,6 +2,7 @@ const form = document.querySelector("#chat-form");
 const promptInput = document.querySelector("#prompt");
 const messages = document.querySelector("#messages");
 const quickButtons = document.querySelectorAll("[data-prompt]");
+let isSubmitting = false;
 
 function addMessage(role, html) {
   const node = document.createElement("div");
@@ -47,9 +48,16 @@ function renderTable(rows) {
 
 async function submitPrompt(prompt) {
   const trimmed = prompt.trim();
-  if (!trimmed) {
+  if (!trimmed || isSubmitting) {
     return;
   }
+
+  isSubmitting = true;
+  promptInput.disabled = true;
+  form.querySelector("button").disabled = true;
+  quickButtons.forEach((button) => {
+    button.disabled = true;
+  });
 
   addMessage("user", `<p>${escapeHtml(trimmed)}</p>`);
   promptInput.value = "";
@@ -75,6 +83,14 @@ async function submitPrompt(prompt) {
     `;
   } catch (error) {
     loading.innerHTML = "<p>Unable to reach the chat service. Check the local server or Cloud Run deployment.</p>";
+  } finally {
+    isSubmitting = false;
+    promptInput.disabled = false;
+    form.querySelector("button").disabled = false;
+    quickButtons.forEach((button) => {
+      button.disabled = false;
+    });
+    promptInput.focus();
   }
 }
 
