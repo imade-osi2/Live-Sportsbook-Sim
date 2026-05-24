@@ -13,6 +13,17 @@ BIGQUERY_DATASET = os.getenv("BIGQUERY_DATASET", "de26_sportsbook_analytics")
 BQ_LOCATION = os.getenv("BIGQUERY_LOCATION", "US")
 DATASET = f"{GCP_PROJECT_ID}.{BIGQUERY_DATASET}"
 
+
+def get_result_limit():
+    raw_limit = os.getenv("CHAT_RESULT_LIMIT", "10")
+    try:
+        return max(1, min(int(raw_limit), 50))
+    except ValueError:
+        return 10
+
+
+RESULT_LIMIT = get_result_limit()
+
 _client = None
 
 
@@ -97,7 +108,7 @@ QUERY_TEMPLATES = {
               implied_prob_gap_pp
             FROM `{DATASET}.agg_best_price_by_outcome`
             ORDER BY implied_prob_gap_pp DESC, price_gap DESC
-            LIMIT 10
+            LIMIT {RESULT_LIMIT}
         """,
     },
     "edge_opportunities": {
@@ -119,7 +130,7 @@ QUERY_TEMPLATES = {
               rationale
             FROM `{DATASET}.agg_suggested_bets_board`
             ORDER BY expected_value DESC, edge DESC
-            LIMIT 10
+            LIMIT {RESULT_LIMIT}
         """,
     },
     "live_games": {
@@ -139,7 +150,7 @@ QUERY_TEMPLATES = {
               odds_last_update
             FROM `{DATASET}.agg_live_game_metrics`
             ORDER BY odds_last_update DESC
-            LIMIT 10
+            LIMIT {RESULT_LIMIT}
         """,
     },
     "bookmaker_opportunities": {
@@ -154,7 +165,7 @@ QUERY_TEMPLATES = {
               avg_edge
             FROM `{DATASET}.agg_bookmaker_edge_opportunities`
             ORDER BY opportunity_count DESC, avg_expected_value DESC
-            LIMIT 10
+            LIMIT {RESULT_LIMIT}
         """,
     },
     "clv_summary": {
@@ -174,7 +185,7 @@ QUERY_TEMPLATES = {
               avg_expected_value
             FROM `{DATASET}.agg_clv_summary`
             ORDER BY beat_close_pct DESC, evaluated_suggestions DESC
-            LIMIT 10
+            LIMIT {RESULT_LIMIT}
         """,
     },
 }
