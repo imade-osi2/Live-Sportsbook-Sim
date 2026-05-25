@@ -46,6 +46,16 @@ function renderTable(rows) {
   `;
 }
 
+async function parseJsonResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    return {
+      error: `The chat service returned ${response.status} instead of JSON.`,
+    };
+  }
+  return response.json();
+}
+
 async function submitPrompt(prompt) {
   const trimmed = prompt.trim();
   if (!trimmed || isSubmitting) {
@@ -69,7 +79,7 @@ async function submitPrompt(prompt) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: trimmed }),
     });
-    const payload = await response.json();
+    const payload = await parseJsonResponse(response);
 
     if (!response.ok) {
       loading.innerHTML = `<p>${escapeHtml(payload.error || "The query could not be routed.")}</p>`;
