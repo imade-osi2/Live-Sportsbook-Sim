@@ -217,7 +217,11 @@ def query():
     if not isinstance(body, dict):
         return jsonify({"error": "Request body must be a JSON object."}), 400
 
-    prompt = body.get("prompt", "").strip()
+    prompt_value = body.get("prompt", "")
+    if not isinstance(prompt_value, str):
+        return jsonify({"error": "Prompt must be a string."}), 400
+
+    prompt = prompt_value.strip()
 
     if not prompt:
         return jsonify({"error": "Enter a question to search the sportsbook data."}), 400
