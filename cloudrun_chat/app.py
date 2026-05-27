@@ -14,15 +14,20 @@ BQ_LOCATION = os.getenv("BIGQUERY_LOCATION", "US")
 DATASET = f"{GCP_PROJECT_ID}.{BIGQUERY_DATASET}"
 
 
-def get_result_limit():
-    raw_limit = os.getenv("CHAT_RESULT_LIMIT", "10")
+def get_int_env(name, default, minimum, maximum):
+    raw_value = os.getenv(name, str(default))
     try:
-        return max(1, min(int(raw_limit), 50))
+        return max(minimum, min(int(raw_value), maximum))
     except ValueError:
-        return 10
+        return default
+
+
+def get_result_limit():
+    return get_int_env("CHAT_RESULT_LIMIT", 10, 1, 50)
 
 
 RESULT_LIMIT = get_result_limit()
+MAX_PROMPT_CHARS = get_int_env("CHAT_MAX_PROMPT_CHARS", 500, 50, 2000)
 
 _client = None
 
@@ -225,6 +230,12 @@ def query():
 
     if not prompt:
         return jsonify({"error": "Enter a question to search the sportsbook data."}), 400
+    if len(prompt) > MAX_PROMPT_CHARS:
+        return jsonify(
+            {
+                "error": f"Prompt is too long. Keep questions under {MAX_PROMPT_CHARS} characters.",
+            }
+        ), 400
 
     intent = choose_intent(prompt)
     if intent is None:
