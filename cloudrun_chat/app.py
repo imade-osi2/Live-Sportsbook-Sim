@@ -28,6 +28,7 @@ def get_result_limit():
 
 RESULT_LIMIT = get_result_limit()
 MAX_PROMPT_CHARS = get_int_env("CHAT_MAX_PROMPT_CHARS", 500, 50, 2000)
+QUERY_TIMEOUT_SECONDS = get_int_env("CHAT_QUERY_TIMEOUT_SECONDS", 20, 5, 120)
 
 _client = None
 
@@ -55,7 +56,8 @@ def rows_to_dicts(rows):
 
 
 def run_query(sql):
-    return rows_to_dicts(get_client().query(sql, location=BQ_LOCATION).result())
+    job = get_client().query(sql, location=BQ_LOCATION)
+    return rows_to_dicts(job.result(timeout=QUERY_TIMEOUT_SECONDS))
 
 
 def choose_intent(prompt):
@@ -208,6 +210,7 @@ def health():
             "status": "ok",
             "dataset": DATASET,
             "location": BQ_LOCATION,
+            "query_timeout_seconds": QUERY_TIMEOUT_SECONDS,
         }
     )
 
