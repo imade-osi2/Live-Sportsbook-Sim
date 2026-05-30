@@ -210,7 +210,9 @@ def health():
             "status": "ok",
             "dataset": DATASET,
             "location": BQ_LOCATION,
+            "max_prompt_chars": MAX_PROMPT_CHARS,
             "query_timeout_seconds": QUERY_TIMEOUT_SECONDS,
+            "result_limit": RESULT_LIMIT,
         }
     )
 
