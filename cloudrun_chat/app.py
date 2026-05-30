@@ -200,7 +200,7 @@ QUERY_TEMPLATES = {
 
 @app.get("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", max_prompt_chars=MAX_PROMPT_CHARS)
 
 
 @app.get("/health")
