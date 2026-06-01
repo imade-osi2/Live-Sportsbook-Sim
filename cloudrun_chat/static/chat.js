@@ -1,5 +1,6 @@
 const form = document.querySelector("#chat-form");
 const promptInput = document.querySelector("#prompt");
+const submitButton = form.querySelector("button");
 const messages = document.querySelector("#messages");
 const quickButtons = document.querySelectorAll("[data-prompt]");
 let isSubmitting = false;
@@ -64,7 +65,8 @@ async function submitPrompt(prompt) {
 
   isSubmitting = true;
   promptInput.disabled = true;
-  form.querySelector("button").disabled = true;
+  submitButton.disabled = true;
+  messages.setAttribute("aria-busy", "true");
   quickButtons.forEach((button) => {
     button.disabled = true;
   });
@@ -96,7 +98,8 @@ async function submitPrompt(prompt) {
   } finally {
     isSubmitting = false;
     promptInput.disabled = false;
-    form.querySelector("button").disabled = false;
+    submitButton.disabled = false;
+    messages.setAttribute("aria-busy", "false");
     quickButtons.forEach((button) => {
       button.disabled = false;
     });
