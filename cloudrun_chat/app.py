@@ -242,8 +242,12 @@ def query():
     prompt_value = body.get("prompt", "")
     if not isinstance(prompt_value, str):
         return jsonify({"error": "Prompt must be a string."}), 400
+    intent_value = body.get("intent", "")
+    if not isinstance(intent_value, str):
+        return jsonify({"error": "Intent must be a string."}), 400
 
     prompt = prompt_value.strip()
+    requested_intent = intent_value.strip()
 
     if not prompt:
         return jsonify({"error": "Enter a question to search the sportsbook data."}), 400
@@ -254,11 +258,18 @@ def query():
             }
         ), 400
 
-    intent = choose_intent(prompt)
+    intent = requested_intent or choose_intent(prompt)
     if intent is None:
         return jsonify(
             {
                 "error": "I can answer questions about best prices, live games, edge, CLV, bookmaker opportunities, and KPIs.",
+                "supported_intents": list(QUERY_TEMPLATES.keys()),
+            }
+        ), 400
+    if intent not in QUERY_TEMPLATES:
+        return jsonify(
+            {
+                "error": "Intent is not supported by this chat service.",
                 "supported_intents": list(QUERY_TEMPLATES.keys()),
             }
         ), 400

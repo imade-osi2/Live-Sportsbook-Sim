@@ -67,7 +67,7 @@ async function parseJsonResponse(response) {
   return response.json();
 }
 
-async function submitPrompt(prompt) {
+async function submitPrompt(prompt, intent = "") {
   const trimmed = prompt.trim();
   if (!trimmed || isSubmitting) {
     return;
@@ -90,7 +90,7 @@ async function submitPrompt(prompt) {
     const response = await fetch("/query", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: trimmed }),
+      body: JSON.stringify({ prompt: trimmed, intent }),
     });
     const payload = await parseJsonResponse(response);
 
@@ -128,6 +128,6 @@ updatePromptCount();
 
 quickButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    submitPrompt(button.dataset.prompt);
+    submitPrompt(button.dataset.prompt, button.dataset.intent || "");
   });
 });
