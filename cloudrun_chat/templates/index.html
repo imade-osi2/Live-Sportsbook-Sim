@@ -51,7 +51,10 @@
             <p class="eyebrow">Chat sidebar</p>
             <h2>Ask the data</h2>
           </div>
-          <span class="status-dot" aria-label="Service online"></span>
+          <div class="service-status" aria-live="polite">
+            <span id="status-dot" class="status-dot status-dot--pending" aria-hidden="true"></span>
+            <span id="status-text" class="status-text">Checking service</span>
+          </div>
         </div>
 
         <div id="messages" class="messages" aria-live="polite">

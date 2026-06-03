@@ -4,7 +4,10 @@ const promptCount = document.querySelector("#prompt-count");
 const submitButton = form.querySelector("button");
 const messages = document.querySelector("#messages");
 const quickButtons = document.querySelectorAll("[data-prompt]");
+const statusDot = document.querySelector("#status-dot");
+const statusText = document.querySelector("#status-text");
 const promptMaxLength = Number(promptInput.dataset.maxLength || promptInput.maxLength);
+const HEALTH_POLL_INTERVAL_MS = 30000;
 let isSubmitting = false;
 
 function addMessage(role, html) {
@@ -67,6 +70,34 @@ async function parseJsonResponse(response) {
   return response.json();
 }
 
+function setServiceStatus(state, text) {
+  if (!statusDot || !statusText) {
+    return;
+  }
+
+  statusDot.className = `status-dot status-dot--${state}`;
+  statusText.textContent = text;
+}
+
+async function refreshHealth() {
+  setServiceStatus("pending", "Checking service");
+
+  try {
+    const response = await fetch("/health", {
+      headers: { Accept: "application/json" },
+    });
+    const payload = await parseJsonResponse(response);
+
+    if (!response.ok || payload.status !== "ok") {
+      throw new Error(payload.error || "Health probe failed");
+    }
+
+    setServiceStatus("healthy", `Healthy: ${payload.dataset}`);
+  } catch (error) {
+    setServiceStatus("error", "Service unavailable");
+  }
+}
+
 async function submitPrompt(prompt, intent = "") {
   const trimmed = prompt.trim();
   if (!trimmed || isSubmitting) {
@@ -125,6 +156,8 @@ form.addEventListener("submit", (event) => {
 
 promptInput.addEventListener("input", updatePromptCount);
 updatePromptCount();
+refreshHealth();
+window.setInterval(refreshHealth, HEALTH_POLL_INTERVAL_MS);
 
 quickButtons.forEach((button) => {
   button.addEventListener("click", () => {

@@ -167,12 +167,34 @@ h2 {
   border-bottom: 1px solid var(--line);
 }
 
+.service-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .status-dot {
   width: 12px;
   height: 12px;
   border-radius: 999px;
+}
+
+.status-dot--healthy {
   background: var(--good);
   box-shadow: 0 0 0 5px rgba(31, 138, 91, 0.12);
+}
+
+.status-dot--pending {
+  background: #d89f25;
+  box-shadow: 0 0 0 5px rgba(216, 159, 37, 0.16);
+}
+
+.status-dot--error {
+  background: #c84b31;
+  box-shadow: 0 0 0 5px rgba(200, 75, 49, 0.14);
 }
 
 .messages {
