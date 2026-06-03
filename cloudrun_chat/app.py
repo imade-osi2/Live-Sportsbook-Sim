@@ -217,6 +217,18 @@ def health():
     )
 
 
+@app.get("/intents")
+def intents():
+    return jsonify(
+        {
+            "intents": [
+                {"id": intent_id, "title": template["title"]}
+                for intent_id, template in QUERY_TEMPLATES.items()
+            ]
+        }
+    )
+
+
 @app.post("/query")
 def query():
     if not request.is_json:
