@@ -61,8 +61,9 @@
         </div>
 
         <form id="chat-form" class="composer">
-          <input id="prompt" name="prompt" type="text" autocomplete="off" maxlength="{{ max_prompt_chars }}" placeholder="Ask about odds, games, edge, or CLV">
+          <input id="prompt" name="prompt" type="text" autocomplete="off" maxlength="{{ max_prompt_chars }}" data-max-length="{{ max_prompt_chars }}" placeholder="Ask about odds, games, edge, or CLV">
           <button type="submit">Send</button>
+          <span id="prompt-count" class="prompt-count">{{ max_prompt_chars }} left</span>
         </form>
       </aside>
     </main>

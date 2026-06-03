@@ -216,6 +216,13 @@ h2 {
   border-top: 1px solid var(--line);
 }
 
+.prompt-count {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+}
+
 .composer input {
   width: 100%;
   min-height: 44px;

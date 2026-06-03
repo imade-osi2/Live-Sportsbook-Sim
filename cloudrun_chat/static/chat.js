@@ -1,8 +1,10 @@
 const form = document.querySelector("#chat-form");
 const promptInput = document.querySelector("#prompt");
+const promptCount = document.querySelector("#prompt-count");
 const submitButton = form.querySelector("button");
 const messages = document.querySelector("#messages");
 const quickButtons = document.querySelectorAll("[data-prompt]");
+const promptMaxLength = Number(promptInput.dataset.maxLength || promptInput.maxLength);
 let isSubmitting = false;
 
 function addMessage(role, html) {
@@ -21,6 +23,14 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function updatePromptCount() {
+  if (!promptCount || !Number.isFinite(promptMaxLength) || promptMaxLength <= 0) {
+    return;
+  }
+  const remaining = Math.max(0, promptMaxLength - promptInput.value.length);
+  promptCount.textContent = `${remaining} left`;
 }
 
 function renderTable(rows) {
@@ -73,6 +83,7 @@ async function submitPrompt(prompt) {
 
   addMessage("user", `<p>${escapeHtml(trimmed)}</p>`);
   promptInput.value = "";
+  updatePromptCount();
   const loading = addMessage("bot", "<p>Searching BigQuery marts...</p>");
 
   try {
@@ -111,6 +122,9 @@ form.addEventListener("submit", (event) => {
   event.preventDefault();
   submitPrompt(promptInput.value);
 });
+
+promptInput.addEventListener("input", updatePromptCount);
+updatePromptCount();
 
 quickButtons.forEach((button) => {
   button.addEventListener("click", () => {
