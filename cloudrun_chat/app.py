@@ -1,6 +1,7 @@
 import datetime as dt
 import decimal
 import os
+from concurrent.futures import TimeoutError
 
 from flask import Flask, jsonify, render_template, request
 from google.cloud import bigquery
@@ -33,6 +34,10 @@ QUERY_TIMEOUT_SECONDS = get_int_env("CHAT_QUERY_TIMEOUT_SECONDS", 20, 5, 120)
 _client = None
 
 
+class QueryTimeoutError(Exception):
+    pass
+
+
 def get_client():
     global _client
     if _client is None:
@@ -57,7 +62,11 @@ def rows_to_dicts(rows):
 
 def run_query(sql):
     job = get_client().query(sql, location=BQ_LOCATION)
-    return rows_to_dicts(job.result(timeout=QUERY_TIMEOUT_SECONDS))
+    try:
+        return rows_to_dicts(job.result(timeout=QUERY_TIMEOUT_SECONDS))
+    except TimeoutError as exc:
+        job.cancel()
+        raise QueryTimeoutError from exc
 
 
 def choose_intent(prompt):
@@ -277,6 +286,15 @@ def query():
     template = QUERY_TEMPLATES[intent]
     try:
         rows = run_query(template["sql"])
+    except QueryTimeoutError:
+        app.logger.warning("BigQuery chat query timed out for intent=%s", intent)
+        return jsonify(
+            {
+                "error": "The BigQuery request timed out. Try a narrower question or retry shortly.",
+                "intent": intent,
+                "title": template["title"],
+            }
+        ), 504
     except Exception:
         app.logger.exception("BigQuery chat query failed for intent=%s", intent)
         return jsonify(
