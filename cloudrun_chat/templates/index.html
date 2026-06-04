@@ -35,12 +35,9 @@
         <section class="panel">
           <p class="eyebrow">Ready searches</p>
           <div class="prompt-grid">
-            <button type="button" data-intent="best_prices" data-prompt="Show me the best prices across books">Best prices</button>
-            <button type="button" data-intent="edge_opportunities" data-prompt="Which games have edge right now?">Games with edge</button>
-            <button type="button" data-intent="live_games" data-prompt="Show live games and scores">Live games</button>
-            <button type="button" data-intent="clv_summary" data-prompt="Give me CLV summary">CLV summary</button>
-            <button type="button" data-intent="bookmaker_opportunities" data-prompt="Which bookmakers have the most opportunities?">Bookmaker gaps</button>
-            <button type="button" data-intent="platform_kpis" data-prompt="Show platform KPIs">Platform KPIs</button>
+            {% for intent in intents %}
+              <button type="button" data-intent="{{ intent.id }}" data-prompt="{{ intent.prompt }}">{{ intent.title }}</button>
+            {% endfor %}
           </div>
         </section>
       </section>
