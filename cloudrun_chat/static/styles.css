@@ -219,6 +219,11 @@ h2 {
   margin-bottom: 0;
 }
 
+.message-meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .message--bot {
   border: 1px solid var(--line);
   background: #f8fafc;

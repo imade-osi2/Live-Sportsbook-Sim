@@ -10,6 +10,11 @@ const promptMaxLength = Number(promptInput.dataset.maxLength || promptInput.maxL
 const HEALTH_POLL_INTERVAL_MS = 30000;
 let isSubmitting = false;
 
+function updateSubmitState() {
+  const hasPrompt = promptInput.value.trim().length > 0;
+  submitButton.disabled = isSubmitting || !hasPrompt;
+}
+
 function addMessage(role, html) {
   const node = document.createElement("div");
   node.className = `message message--${role}`;
@@ -30,10 +35,12 @@ function escapeHtml(value) {
 
 function updatePromptCount() {
   if (!promptCount || !Number.isFinite(promptMaxLength) || promptMaxLength <= 0) {
+    updateSubmitState();
     return;
   }
   const remaining = Math.max(0, promptMaxLength - promptInput.value.length);
   promptCount.textContent = `${remaining} left`;
+  updateSubmitState();
 }
 
 function renderTable(rows) {
@@ -101,12 +108,13 @@ async function refreshHealth() {
 async function submitPrompt(prompt, intent = "") {
   const trimmed = prompt.trim();
   if (!trimmed || isSubmitting) {
+    updateSubmitState();
     return;
   }
 
   isSubmitting = true;
   promptInput.disabled = true;
-  submitButton.disabled = true;
+  updateSubmitState();
   messages.setAttribute("aria-busy", "true");
   quickButtons.forEach((button) => {
     button.disabled = true;
@@ -126,21 +134,29 @@ async function submitPrompt(prompt, intent = "") {
     const payload = await parseJsonResponse(response);
 
     if (!response.ok) {
+      promptInput.value = trimmed;
+      updatePromptCount();
+      setServiceStatus("error", "Last query failed");
       loading.innerHTML = `<p>${escapeHtml(payload.error || "The query could not be routed.")}</p>`;
       return;
     }
 
+    setServiceStatus("healthy", `Healthy: ${payload.row_count} row${payload.row_count === 1 ? "" : "s"}`);
     loading.innerHTML = `
       <p><strong>${escapeHtml(payload.title)}</strong></p>
       <p>${escapeHtml(payload.answer)}</p>
+      <p class="message-meta">${escapeHtml(`${payload.row_count} row${payload.row_count === 1 ? "" : "s"} returned`)}</p>
       ${renderTable(payload.rows || [])}
     `;
   } catch (error) {
+    promptInput.value = trimmed;
+    updatePromptCount();
+    setServiceStatus("error", "Service unavailable");
     loading.innerHTML = "<p>Unable to reach the chat service. Check the local server or Cloud Run deployment.</p>";
   } finally {
     isSubmitting = false;
     promptInput.disabled = false;
-    submitButton.disabled = false;
+    updateSubmitState();
     messages.setAttribute("aria-busy", "false");
     quickButtons.forEach((button) => {
       button.disabled = false;
