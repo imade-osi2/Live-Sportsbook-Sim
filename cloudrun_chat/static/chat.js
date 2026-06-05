@@ -9,6 +9,8 @@ const statusText = document.querySelector("#status-text");
 const promptMaxLength = Number(promptInput.dataset.maxLength || promptInput.maxLength);
 const HEALTH_POLL_INTERVAL_MS = 30000;
 let isSubmitting = false;
+let isRefreshingHealth = false;
+let hasLoadedHealth = false;
 
 function updateSubmitState() {
   const hasPrompt = promptInput.value.trim().length > 0;
@@ -86,8 +88,15 @@ function setServiceStatus(state, text) {
   statusText.textContent = text;
 }
 
-async function refreshHealth() {
-  setServiceStatus("pending", "Checking service");
+async function refreshHealth({ showPending = false } = {}) {
+  if (isSubmitting || isRefreshingHealth) {
+    return;
+  }
+
+  isRefreshingHealth = true;
+  if (showPending || !hasLoadedHealth) {
+    setServiceStatus("pending", "Checking service");
+  }
 
   try {
     const response = await fetch("/health", {
@@ -99,9 +108,12 @@ async function refreshHealth() {
       throw new Error(payload.error || "Health probe failed");
     }
 
+    hasLoadedHealth = true;
     setServiceStatus("healthy", `Healthy: ${payload.dataset}`);
   } catch (error) {
-    setServiceStatus("error", "Service unavailable");
+    setServiceStatus("error", error.message || "Service unavailable");
+  } finally {
+    isRefreshingHealth = false;
   }
 }
 
@@ -172,7 +184,7 @@ form.addEventListener("submit", (event) => {
 
 promptInput.addEventListener("input", updatePromptCount);
 updatePromptCount();
-refreshHealth();
+refreshHealth({ showPending: true });
 window.setInterval(refreshHealth, HEALTH_POLL_INTERVAL_MS);
 
 quickButtons.forEach((button) => {
