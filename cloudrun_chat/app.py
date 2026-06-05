@@ -87,6 +87,17 @@ def choose_intent(prompt):
     return None
 
 
+def resolve_intent(prompt, requested_intent):
+    if requested_intent in QUERY_TEMPLATES:
+        return requested_intent, "requested"
+
+    inferred_intent = choose_intent(prompt)
+    if inferred_intent is not None:
+        return inferred_intent, "prompt"
+
+    return None, None
+
+
 QUERY_TEMPLATES = {
     "platform_kpis": {
         "title": "Platform KPIs",
@@ -288,18 +299,16 @@ def query():
             }
         ), 400
 
-    intent = requested_intent or choose_intent(prompt)
+    intent, intent_source = resolve_intent(prompt, requested_intent)
     if intent is None:
+        error_message = (
+            "Intent is not supported by this chat service."
+            if requested_intent
+            else "I can answer questions about best prices, live games, edge, CLV, bookmaker opportunities, and KPIs."
+        )
         return jsonify(
             {
-                "error": "I can answer questions about best prices, live games, edge, CLV, bookmaker opportunities, and KPIs.",
-                "supported_intents": list(QUERY_TEMPLATES.keys()),
-            }
-        ), 400
-    if intent not in QUERY_TEMPLATES:
-        return jsonify(
-            {
-                "error": "Intent is not supported by this chat service.",
+                "error": error_message,
                 "supported_intents": list(QUERY_TEMPLATES.keys()),
             }
         ), 400
@@ -313,6 +322,7 @@ def query():
             {
                 "error": "The BigQuery request timed out. Try a narrower question or retry shortly.",
                 "intent": intent,
+                "intent_source": intent_source,
                 "title": template["title"],
             }
         ), 504
@@ -322,6 +332,7 @@ def query():
             {
                 "error": "The chat route matched your question, but BigQuery could not return results. Check Cloud Run service account permissions, dataset config, and whether dbt has built the mart.",
                 "intent": intent,
+                "intent_source": intent_source,
                 "title": template["title"],
             }
         ), 502
@@ -329,6 +340,7 @@ def query():
     return jsonify(
         {
             "intent": intent,
+            "intent_source": intent_source,
             "title": template["title"],
             "answer": template["summary"] if rows else template["empty"],
             "row_count": len(rows),
