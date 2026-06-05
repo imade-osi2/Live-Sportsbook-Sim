@@ -36,7 +36,7 @@
           <p class="eyebrow">Ready searches</p>
           <div class="prompt-grid">
             {% for intent in intents %}
-              <button type="button" data-intent="{{ intent.id }}" data-prompt="{{ intent.prompt }}">{{ intent.title }}</button>
+              <button type="button" data-intent="{{ intent.id }}" data-prompt="{{ intent.prompt }}">{{ intent.label }}</button>
             {% endfor %}
           </div>
         </section>

@@ -90,6 +90,7 @@ def choose_intent(prompt):
 QUERY_TEMPLATES = {
     "platform_kpis": {
         "title": "Platform KPIs",
+        "label": "Platform KPIs",
         "prompt": "Show platform KPIs",
         "empty": "No KPI rows are available yet. Run the ingestion and dbt refresh after the Odds API quota resets.",
         "summary": "Here is the current platform summary from the curated KPI mart.",
@@ -108,6 +109,7 @@ QUERY_TEMPLATES = {
     },
     "best_prices": {
         "title": "Best Numbers Across Books",
+        "label": "Best prices",
         "prompt": "Show me the best prices across books",
         "empty": "No current best-price rows were found. This usually means the Odds API refresh has not run with fresh current-slate data.",
         "summary": "These are the largest current price gaps across books.",
@@ -131,6 +133,7 @@ QUERY_TEMPLATES = {
     },
     "edge_opportunities": {
         "title": "Suggested Edge Opportunities",
+        "label": "Games with edge",
         "prompt": "Which games have edge right now?",
         "empty": "No current edge suggestions were found. Current-slate suggestion marts may be empty until fresh odds data lands.",
         "summary": "These are the strongest current suggested bets by expected value.",
@@ -154,6 +157,7 @@ QUERY_TEMPLATES = {
     },
     "live_games": {
         "title": "Live Game Metrics",
+        "label": "Live games",
         "prompt": "Show live games and scores",
         "empty": "No live game rows were found. Live metrics depend on fresh score and odds refreshes.",
         "summary": "These are the latest live or final game metrics available.",
@@ -175,6 +179,7 @@ QUERY_TEMPLATES = {
     },
     "bookmaker_opportunities": {
         "title": "Bookmaker Edge Opportunities",
+        "label": "Bookmaker gaps",
         "prompt": "Which bookmakers have the most opportunities?",
         "empty": "No bookmaker opportunity rows were found for the current slate.",
         "summary": "These books currently show the most medium/high confidence opportunities.",
@@ -191,6 +196,7 @@ QUERY_TEMPLATES = {
     },
     "clv_summary": {
         "title": "Closing Line Value Summary",
+        "label": "CLV summary",
         "prompt": "Give me CLV summary",
         "empty": "No CLV rows are available yet. CLV fills in after suggestions can be compared with later observed prices.",
         "summary": "Here is the current beat-close and expected value summary by signal tier and market.",
@@ -218,6 +224,7 @@ def serialize_intents():
         {
             "id": intent_id,
             "title": template["title"],
+            "label": template["label"],
             "prompt": template["prompt"],
         }
         for intent_id, template in QUERY_TEMPLATES.items()
