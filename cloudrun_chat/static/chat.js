@@ -8,6 +8,8 @@ const statusDot = document.querySelector("#status-dot");
 const statusText = document.querySelector("#status-text");
 const promptMaxLength = Number(promptInput.dataset.maxLength || promptInput.maxLength);
 const HEALTH_POLL_INTERVAL_MS = 30000;
+const HEALTH_REQUEST_TIMEOUT_MS = 8000;
+const QUERY_REQUEST_TIMEOUT_MS = 25000;
 let isSubmitting = false;
 let isRefreshingHealth = false;
 let hasLoadedHealth = false;
@@ -79,6 +81,25 @@ async function parseJsonResponse(response) {
   return response.json();
 }
 
+async function fetchWithTimeout(url, options = {}, timeoutMs = QUERY_REQUEST_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (error.name === "AbortError") {
+      throw new Error(`Request timed out after ${Math.round(timeoutMs / 1000)}s.`);
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
 function setServiceStatus(state, text) {
   if (!statusDot || !statusText) {
     return;
@@ -99,9 +120,9 @@ async function refreshHealth({ showPending = false } = {}) {
   }
 
   try {
-    const response = await fetch("/health", {
+    const response = await fetchWithTimeout("/health", {
       headers: { Accept: "application/json" },
-    });
+    }, HEALTH_REQUEST_TIMEOUT_MS);
     const payload = await parseJsonResponse(response);
 
     if (!response.ok || payload.status !== "ok") {
@@ -138,11 +159,11 @@ async function submitPrompt(prompt, intent = "") {
   const loading = addMessage("bot", "<p>Searching BigQuery marts...</p>");
 
   try {
-    const response = await fetch("/query", {
+    const response = await fetchWithTimeout("/query", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: trimmed, intent }),
-    });
+    }, QUERY_REQUEST_TIMEOUT_MS);
     const payload = await parseJsonResponse(response);
 
     if (!response.ok) {
@@ -163,8 +184,9 @@ async function submitPrompt(prompt, intent = "") {
   } catch (error) {
     promptInput.value = trimmed;
     updatePromptCount();
-    setServiceStatus("error", "Service unavailable");
-    loading.innerHTML = "<p>Unable to reach the chat service. Check the local server or Cloud Run deployment.</p>";
+    const message = error.message || "Unable to reach the chat service.";
+    setServiceStatus("error", message);
+    loading.innerHTML = `<p>${escapeHtml(message)}</p><p>Check the local server or Cloud Run deployment.</p>`;
   } finally {
     isSubmitting = false;
     promptInput.disabled = false;
