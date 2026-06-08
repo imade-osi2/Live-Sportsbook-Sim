@@ -292,6 +292,13 @@ def query():
 
     if not prompt:
         return jsonify({"error": "Enter a question to search the sportsbook data."}), 400
+    if requested_intent and requested_intent not in QUERY_TEMPLATES:
+        return jsonify(
+            {
+                "error": f"Intent '{requested_intent}' is not supported by this chat service.",
+                "supported_intents": list(QUERY_TEMPLATES.keys()),
+            }
+        ), 400
     if len(prompt) > MAX_PROMPT_CHARS:
         return jsonify(
             {
