@@ -1,6 +1,7 @@
 import datetime as dt
 import decimal
 import os
+import re
 from concurrent.futures import TimeoutError
 
 from flask import Flask, jsonify, render_template, request
@@ -9,9 +10,14 @@ from google.cloud import bigquery
 
 app = Flask(__name__)
 
-GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID", "de26-live-sportsbook-sim")
-BIGQUERY_DATASET = os.getenv("BIGQUERY_DATASET", "de26_sportsbook_analytics")
-BQ_LOCATION = os.getenv("BIGQUERY_LOCATION", "US")
+
+def get_str_env(name, default):
+    return os.getenv(name, default).strip() or default
+
+
+GCP_PROJECT_ID = get_str_env("GCP_PROJECT_ID", "de26-live-sportsbook-sim")
+BIGQUERY_DATASET = get_str_env("BIGQUERY_DATASET", "de26_sportsbook_analytics")
+BQ_LOCATION = get_str_env("BIGQUERY_LOCATION", "US")
 DATASET = f"{GCP_PROJECT_ID}.{BIGQUERY_DATASET}"
 
 
@@ -76,14 +82,16 @@ def choose_intent(prompt):
         return "platform_kpis"
     if any(term in text for term in ["clv", "closing", "beat close", "beat-close"]):
         return "clv_summary"
-    if any(term in text for term in ["bookmaker", "book", "opportunities"]):
-        return "bookmaker_opportunities"
     if any(term in text for term in ["edge", "value", "suggested", "recommendation"]):
         return "edge_opportunities"
     if any(term in text for term in ["live", "score", "scores", "game stats", "stats"]):
         return "live_games"
     if any(term in text for term in ["pregame", "odds", "line", "price", "best number"]):
         return "best_prices"
+    if any(term in text for term in ["bookmaker", "bookmakers", "sportsbook", "sportsbooks"]):
+        return "bookmaker_opportunities"
+    if "opportunit" in text and re.search(r"\bbooks?\b", text):
+        return "bookmaker_opportunities"
     return None
 
 
