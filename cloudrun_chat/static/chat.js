@@ -13,6 +13,9 @@ const QUERY_REQUEST_TIMEOUT_MS = 25000;
 let isSubmitting = false;
 let isRefreshingHealth = false;
 let hasLoadedHealth = false;
+let healthPollId = null;
+let currentStatusState = "pending";
+let currentStatusSource = "health";
 
 function updateSubmitState() {
   const hasPrompt = promptInput.value.trim().length > 0;
@@ -100,11 +103,17 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = QUERY_REQUEST_TIM
   }
 }
 
-function setServiceStatus(state, text) {
+function setServiceStatus(state, text, { source = "health", preserveQueryError = false } = {}) {
   if (!statusDot || !statusText) {
     return;
   }
 
+  if (preserveQueryError && currentStatusSource === "query" && currentStatusState === "error") {
+    return;
+  }
+
+  currentStatusState = state;
+  currentStatusSource = source;
   statusDot.className = `status-dot status-dot--${state}`;
   statusText.textContent = text;
 }
@@ -130,7 +139,9 @@ async function refreshHealth({ showPending = false } = {}) {
     }
 
     hasLoadedHealth = true;
-    setServiceStatus("healthy", `Healthy: ${payload.dataset}`);
+    setServiceStatus("healthy", `Healthy: ${payload.dataset}`, {
+      preserveQueryError: true,
+    });
   } catch (error) {
     setServiceStatus("error", error.message || "Service unavailable");
   } finally {
@@ -169,12 +180,16 @@ async function submitPrompt(prompt, intent = "") {
     if (!response.ok) {
       promptInput.value = trimmed;
       updatePromptCount();
-      setServiceStatus("error", "Last query failed");
+      setServiceStatus("error", "Last query failed", { source: "query" });
       loading.innerHTML = `<p>${escapeHtml(payload.error || "The query could not be routed.")}</p>`;
       return;
     }
 
-    setServiceStatus("healthy", `Healthy: ${payload.row_count} row${payload.row_count === 1 ? "" : "s"}`);
+    setServiceStatus(
+      "healthy",
+      `Healthy: ${payload.row_count} row${payload.row_count === 1 ? "" : "s"}`,
+      { source: "query" },
+    );
     loading.innerHTML = `
       <p><strong>${escapeHtml(payload.title)}</strong></p>
       <p>${escapeHtml(payload.answer)}</p>
@@ -185,7 +200,7 @@ async function submitPrompt(prompt, intent = "") {
     promptInput.value = trimmed;
     updatePromptCount();
     const message = error.message || "Unable to reach the chat service.";
-    setServiceStatus("error", message);
+    setServiceStatus("error", message, { source: "query" });
     loading.innerHTML = `<p>${escapeHtml(message)}</p><p>Check the local server or Cloud Run deployment.</p>`;
   } finally {
     isSubmitting = false;
@@ -199,6 +214,18 @@ async function submitPrompt(prompt, intent = "") {
   }
 }
 
+function startHealthPolling() {
+  if (healthPollId !== null) {
+    return;
+  }
+
+  healthPollId = window.setInterval(() => {
+    if (!document.hidden) {
+      refreshHealth();
+    }
+  }, HEALTH_POLL_INTERVAL_MS);
+}
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   submitPrompt(promptInput.value);
@@ -207,7 +234,13 @@ form.addEventListener("submit", (event) => {
 promptInput.addEventListener("input", updatePromptCount);
 updatePromptCount();
 refreshHealth({ showPending: true });
-window.setInterval(refreshHealth, HEALTH_POLL_INTERVAL_MS);
+startHealthPolling();
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    refreshHealth();
+  }
+});
 
 quickButtons.forEach((button) => {
   button.addEventListener("click", () => {
