@@ -61,8 +61,10 @@
         </div>
 
         <form id="chat-form" class="composer">
-          <input id="prompt" name="prompt" type="text" autocomplete="off" maxlength="{{ max_prompt_chars }}" data-max-length="{{ max_prompt_chars }}" placeholder="Ask about odds, games, edge, or CLV">
+          <label class="sr-only" for="prompt">Ask the sportsbook data a question</label>
+          <input id="prompt" name="prompt" type="text" autocomplete="off" maxlength="{{ max_prompt_chars }}" data-max-length="{{ max_prompt_chars }}" aria-describedby="prompt-help prompt-count" placeholder="Ask about odds, games, edge, or CLV">
           <button type="submit">Send</button>
+          <p id="prompt-help" class="composer-help">Use the ready searches above or ask your own question about odds, edge, live games, CLV, or KPIs.</p>
           <span id="prompt-count" class="prompt-count">{{ max_prompt_chars }} left</span>
         </form>
       </aside>
