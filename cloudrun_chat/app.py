@@ -11,6 +11,13 @@ from google.cloud import bigquery
 app = Flask(__name__)
 
 
+@app.after_request
+def add_security_headers(response):
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    return response
+
+
 def get_str_env(name, default):
     return os.getenv(name, default).strip() or default
 
