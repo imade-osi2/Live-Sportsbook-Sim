@@ -15,6 +15,11 @@ app = Flask(__name__)
 def add_security_headers(response):
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault(
+        "Content-Security-Policy",
+        "default-src 'self'; connect-src 'self'; style-src 'self'; script-src 'self'; "
+        "base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+    )
     return response
 
 
