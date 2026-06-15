@@ -287,7 +287,12 @@ def health():
 
 @app.get("/intents")
 def intents():
-    return jsonify({"intents": serialize_intents()})
+    return jsonify(
+        {
+            "intents": serialize_intents(),
+            "max_prompt_chars": MAX_PROMPT_CHARS,
+        }
+    )
 
 
 @app.post("/query")
