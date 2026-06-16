@@ -81,7 +81,14 @@ async function parseJsonResponse(response) {
       error: `The chat service returned ${response.status} instead of JSON.`,
     };
   }
-  return response.json();
+
+  try {
+    return await response.json();
+  } catch {
+    return {
+      error: `The chat service returned malformed JSON with status ${response.status}.`,
+    };
+  }
 }
 
 async function fetchWithTimeout(url, options = {}, timeoutMs = QUERY_REQUEST_TIMEOUT_MS) {
