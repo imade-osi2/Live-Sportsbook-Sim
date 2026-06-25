@@ -102,6 +102,12 @@ h2 {
   text-decoration: none;
 }
 
+.dashboard-link:focus-visible,
+.composer button:focus-visible {
+  outline: 3px solid rgba(23, 107, 135, 0.32);
+  outline-offset: 2px;
+}
+
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
