@@ -281,6 +281,7 @@ def health():
             "max_prompt_chars": MAX_PROMPT_CHARS,
             "query_timeout_seconds": QUERY_TIMEOUT_SECONDS,
             "result_limit": RESULT_LIMIT,
+            "supported_intents": list(QUERY_TEMPLATES.keys()),
         }
     )
 
