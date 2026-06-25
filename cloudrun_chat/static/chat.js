@@ -200,7 +200,7 @@ async function submitPrompt(prompt, intent = "") {
     loading.innerHTML = `
       <p><strong>${escapeHtml(payload.title)}</strong></p>
       <p>${escapeHtml(payload.answer)}</p>
-      <p class="message-meta">${escapeHtml(`${payload.row_count} row${payload.row_count === 1 ? "" : "s"} returned`)}</p>
+      <p class="message-meta">${escapeHtml(`${payload.row_count} row${payload.row_count === 1 ? "" : "s"} returned from ${payload.intent} (${payload.intent_source})`)}</p>
       ${renderTable(payload.rows || [])}
     `;
   } catch (error) {
