@@ -291,6 +291,7 @@ def intents():
         {
             "intents": serialize_intents(),
             "max_prompt_chars": MAX_PROMPT_CHARS,
+            "result_limit": RESULT_LIMIT,
         }
     )
 
