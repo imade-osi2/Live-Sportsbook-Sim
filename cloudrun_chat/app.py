@@ -15,6 +15,8 @@ app = Flask(__name__)
 def add_security_headers(response):
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    if request.path in {"/health", "/intents", "/query"}:
+        response.headers.setdefault("Cache-Control", "no-store")
     response.headers.setdefault(
         "Content-Security-Policy",
         "default-src 'self'; connect-src 'self'; style-src 'self'; script-src 'self'; "
