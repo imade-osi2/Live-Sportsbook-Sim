@@ -66,7 +66,7 @@ function renderTable(rows) {
 
   return `
     <div class="table-wrap">
-      <table>
+      <table aria-label="Sportsbook query results">
         <thead><tr>${head}</tr></thead>
         <tbody>${body}</tbody>
       </table>
