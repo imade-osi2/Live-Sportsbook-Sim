@@ -56,6 +56,7 @@ function renderTable(rows) {
   }
 
   const columns = Object.keys(rows[0]);
+  const tableLabel = `${rows.length} sportsbook query result${rows.length === 1 ? "" : "s"}`;
   const head = columns.map((column) => `<th>${escapeHtml(column)}</th>`).join("");
   const body = rows
     .map((row) => {
@@ -66,7 +67,7 @@ function renderTable(rows) {
 
   return `
     <div class="table-wrap">
-      <table aria-label="Sportsbook query results">
+      <table aria-label="${escapeHtml(tableLabel)}">
         <thead><tr>${head}</tr></thead>
         <tbody>${body}</tbody>
       </table>
