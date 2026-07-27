@@ -241,6 +241,7 @@ form.addEventListener("submit", (event) => {
 
 promptInput.addEventListener("input", updatePromptCount);
 updatePromptCount();
+promptInput.focus();
 refreshHealth({ showPending: true });
 startHealthPolling();
 
