@@ -133,7 +133,7 @@ async function refreshHealth({ showPending = false } = {}) {
 
   isRefreshingHealth = true;
   if (showPending || !hasLoadedHealth) {
-    setServiceStatus("pending", "Checking service");
+    setServiceStatus("pending", "Checking service...");
   }
 
   try {
