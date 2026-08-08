@@ -168,7 +168,7 @@ h2 {
 .prompt-grid button:disabled,
 .composer button:disabled,
 .composer input:disabled {
-  cursor: wait;
+  cursor: not-allowed;
   opacity: 0.58;
 }
 
