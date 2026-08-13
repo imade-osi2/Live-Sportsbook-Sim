@@ -286,9 +286,10 @@ h2 {
   color: var(--ink);
 }
 
-.composer input:focus {
+.composer input:focus-visible {
   border-color: var(--accent);
-  outline: none;
+  outline: 3px solid rgba(23, 107, 135, 0.2);
+  outline-offset: 2px;
 }
 
 .composer button {
