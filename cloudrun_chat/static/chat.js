@@ -193,16 +193,17 @@ async function submitPrompt(prompt, intent = "") {
       return;
     }
 
+    const rows = Array.isArray(payload.rows) ? payload.rows : [];
+    const rowCount = Number.isFinite(Number(payload.row_count)) ? Number(payload.row_count) : rows.length;
     setServiceStatus(
       "healthy",
-      `Healthy: ${payload.row_count} row${payload.row_count === 1 ? "" : "s"}`,
+      `Healthy: ${rowCount} row${rowCount === 1 ? "" : "s"}`,
       { source: "query" },
     );
-    const rows = Array.isArray(payload.rows) ? payload.rows : [];
     loading.innerHTML = `
       <p><strong>${escapeHtml(payload.title)}</strong></p>
       <p>${escapeHtml(payload.answer)}</p>
-      <p class="message-meta">${escapeHtml(`${payload.row_count} row${payload.row_count === 1 ? "" : "s"} returned from ${payload.intent} (${payload.intent_source})`)}</p>
+      <p class="message-meta">${escapeHtml(`${rowCount} row${rowCount === 1 ? "" : "s"} returned from ${payload.intent} (${payload.intent_source})`)}</p>
       ${renderTable(rows)}
     `;
   } catch (error) {
