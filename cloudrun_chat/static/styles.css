@@ -102,6 +102,10 @@ h2 {
   text-decoration: none;
 }
 
+.dashboard-link:hover {
+  background: var(--accent-dark);
+}
+
 .dashboard-link:focus-visible,
 .composer button:focus-visible {
   outline: 3px solid rgba(23, 107, 135, 0.32);
