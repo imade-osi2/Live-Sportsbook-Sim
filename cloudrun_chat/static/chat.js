@@ -20,6 +20,7 @@ let currentStatusSource = "health";
 function updateSubmitState() {
   const hasPrompt = promptInput.value.trim().length > 0;
   submitButton.disabled = isSubmitting || !hasPrompt;
+  submitButton.setAttribute("aria-disabled", String(submitButton.disabled));
 }
 
 function addMessage(role, html) {
