@@ -171,6 +171,7 @@ async function submitPrompt(prompt, intent = "") {
   messages.setAttribute("aria-busy", "true");
   quickButtons.forEach((button) => {
     button.disabled = true;
+    button.setAttribute("aria-disabled", "true");
   });
 
   addMessage("user", `<p>${escapeHtml(trimmed)}</p>`);
@@ -220,6 +221,7 @@ async function submitPrompt(prompt, intent = "") {
     messages.setAttribute("aria-busy", "false");
     quickButtons.forEach((button) => {
       button.disabled = false;
+      button.setAttribute("aria-disabled", "false");
     });
     promptInput.focus();
   }
