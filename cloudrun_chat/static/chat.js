@@ -257,6 +257,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 quickButtons.forEach((button) => {
+  button.setAttribute("aria-disabled", "false");
   button.addEventListener("click", () => {
     submitPrompt(button.dataset.prompt, button.dataset.intent || "");
   });
