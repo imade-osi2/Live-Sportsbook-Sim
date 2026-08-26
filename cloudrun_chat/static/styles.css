@@ -169,6 +169,7 @@ h2 {
 
 .prompt-grid button:hover,
 .prompt-grid button:focus-visible {
+  background: #ffffff;
   border-color: var(--accent);
   outline: 3px solid rgba(23, 107, 135, 0.2);
   outline-offset: 2px;
