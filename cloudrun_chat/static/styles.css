@@ -175,6 +175,10 @@ h2 {
   outline-offset: 2px;
 }
 
+.prompt-grid button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
 .prompt-grid button:disabled,
 .composer button:disabled,
 .composer input:disabled {
