@@ -388,4 +388,10 @@ tr:last-child td {
   .prompt-grid button {
     transition: none;
   }
+
+  .dashboard-link:active,
+  .composer button:active:not(:disabled),
+  .prompt-grid button:active:not(:disabled) {
+    transform: none;
+  }
 }
