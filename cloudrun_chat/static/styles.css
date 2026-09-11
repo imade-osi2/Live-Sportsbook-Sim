@@ -351,6 +351,7 @@ td {
 th {
   color: var(--accent-dark);
   font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
 tr:last-child td {
