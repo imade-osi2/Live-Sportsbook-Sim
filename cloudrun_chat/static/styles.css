@@ -349,9 +349,12 @@ td {
 }
 
 th {
+  position: sticky;
+  top: 0;
   color: var(--accent-dark);
   font-weight: 800;
   overflow-wrap: anywhere;
+  background: #ffffff;
 }
 
 tr:last-child td {
