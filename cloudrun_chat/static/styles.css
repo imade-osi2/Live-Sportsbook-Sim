@@ -204,12 +204,21 @@ h2 {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
 }
 
+.status-text {
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .status-dot {
+  flex: 0 0 auto;
   width: 12px;
   height: 12px;
   border-radius: 999px;
