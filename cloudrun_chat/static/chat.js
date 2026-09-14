@@ -56,7 +56,16 @@ function renderTable(rows) {
     return "";
   }
 
-  const columns = Object.keys(rows[0]);
+  const firstRow = rows[0];
+  if (!firstRow || typeof firstRow !== "object" || Array.isArray(firstRow)) {
+    return "";
+  }
+
+  const columns = Object.keys(firstRow);
+  if (!columns.length) {
+    return "";
+  }
+
   const tableLabel = `${rows.length} sportsbook query result${rows.length === 1 ? "" : "s"}`;
   const head = columns.map((column) => `<th>${escapeHtml(column)}</th>`).join("");
   const body = rows
