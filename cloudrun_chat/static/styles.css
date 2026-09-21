@@ -241,6 +241,7 @@ h2 {
 
 .messages {
   overflow-y: auto;
+  scrollbar-gutter: stable;
   padding: 20px;
 }
 
