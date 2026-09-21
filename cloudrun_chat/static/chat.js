@@ -191,7 +191,7 @@ async function submitPrompt(prompt, intent = "") {
   try {
     const response = await fetchWithTimeout("/query", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { Accept: "application/json", "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: trimmed, intent }),
     }, QUERY_REQUEST_TIMEOUT_MS);
     const payload = await parseJsonResponse(response);
