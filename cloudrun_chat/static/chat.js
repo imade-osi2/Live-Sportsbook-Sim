@@ -56,7 +56,8 @@ function renderTable(rows) {
     return "";
   }
 
-  const firstRow = rows[0];
+  const tableRows = rows.filter((row) => row && typeof row === "object" && !Array.isArray(row));
+  const firstRow = tableRows[0];
   if (!firstRow || typeof firstRow !== "object" || Array.isArray(firstRow)) {
     return "";
   }
@@ -66,9 +67,9 @@ function renderTable(rows) {
     return "";
   }
 
-  const tableLabel = `${rows.length} sportsbook query result${rows.length === 1 ? "" : "s"}`;
+  const tableLabel = `${tableRows.length} sportsbook query result${tableRows.length === 1 ? "" : "s"}`;
   const head = columns.map((column) => `<th>${escapeHtml(column)}</th>`).join("");
-  const body = rows
+  const body = tableRows
     .map((row) => {
       const cells = columns.map((column) => `<td>${escapeHtml(row[column])}</td>`).join("");
       return `<tr>${cells}</tr>`;
