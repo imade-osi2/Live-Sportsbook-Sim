@@ -207,15 +207,19 @@ async function submitPrompt(prompt, intent = "") {
 
     const rows = Array.isArray(payload.rows) ? payload.rows : [];
     const rowCount = Number.isFinite(Number(payload.row_count)) ? Number(payload.row_count) : rows.length;
+    const title = payload.title || "Sportsbook query result";
+    const answer = payload.answer || "The chat service returned a result.";
+    const intent = payload.intent || "unknown";
+    const intentSource = payload.intent_source || "router";
     setServiceStatus(
       "healthy",
       `Healthy: ${rowCount} row${rowCount === 1 ? "" : "s"}`,
       { source: "query" },
     );
     loading.innerHTML = `
-      <p><strong>${escapeHtml(payload.title)}</strong></p>
-      <p>${escapeHtml(payload.answer)}</p>
-      <p class="message-meta">${escapeHtml(`${rowCount} row${rowCount === 1 ? "" : "s"} returned from ${payload.intent} (${payload.intent_source})`)}</p>
+      <p><strong>${escapeHtml(title)}</strong></p>
+      <p>${escapeHtml(answer)}</p>
+      <p class="message-meta">${escapeHtml(`${rowCount} row${rowCount === 1 ? "" : "s"} returned from ${intent} (${intentSource})`)}</p>
       ${renderTable(rows)}
     `;
   } catch (error) {
