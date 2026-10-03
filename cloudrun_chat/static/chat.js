@@ -188,6 +188,7 @@ async function submitPrompt(prompt, intent = "") {
   promptInput.value = "";
   updatePromptCount();
   const loading = addMessage("bot", "<p>Searching BigQuery marts...</p>");
+  loading.classList.add("message--loading");
 
   try {
     const response = await fetchWithTimeout("/query", {
@@ -201,6 +202,7 @@ async function submitPrompt(prompt, intent = "") {
       promptInput.value = trimmed;
       updatePromptCount();
       setServiceStatus("error", "Last query failed", { source: "query" });
+      loading.classList.remove("message--loading");
       loading.innerHTML = `<p>${escapeHtml(payload.error || "The query could not be routed.")}</p>`;
       return;
     }
@@ -216,6 +218,7 @@ async function submitPrompt(prompt, intent = "") {
       `Healthy: ${rowCount} row${rowCount === 1 ? "" : "s"}`,
       { source: "query" },
     );
+    loading.classList.remove("message--loading");
     loading.innerHTML = `
       <p><strong>${escapeHtml(title)}</strong></p>
       <p>${escapeHtml(answer)}</p>
@@ -227,6 +230,7 @@ async function submitPrompt(prompt, intent = "") {
     updatePromptCount();
     const message = error.message || "Unable to reach the chat service.";
     setServiceStatus("error", message, { source: "query" });
+    loading.classList.remove("message--loading");
     loading.innerHTML = `<p>${escapeHtml(message)}</p><p>Check the local server or Cloud Run deployment.</p>`;
   } finally {
     isSubmitting = false;

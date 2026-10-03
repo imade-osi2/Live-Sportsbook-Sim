@@ -272,6 +272,11 @@ h2 {
   background: #f8fafc;
 }
 
+.message--loading {
+  color: var(--muted);
+  font-style: italic;
+}
+
 .message--user {
   margin-left: auto;
   background: var(--accent);
