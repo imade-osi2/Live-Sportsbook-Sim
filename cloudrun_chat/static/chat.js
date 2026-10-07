@@ -47,7 +47,7 @@ function updatePromptCount() {
     return;
   }
   const remaining = Math.max(0, promptMaxLength - promptInput.value.length);
-  promptCount.textContent = `${remaining} left`;
+  promptCount.textContent = `${remaining} character${remaining === 1 ? "" : "s"} left`;
   updateSubmitState();
 }
 
