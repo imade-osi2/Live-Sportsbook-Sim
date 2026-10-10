@@ -189,6 +189,7 @@ async function submitPrompt(prompt, intent = "") {
   updatePromptCount();
   const loading = addMessage("bot", "<p>Searching BigQuery marts...</p>");
   loading.classList.add("message--loading");
+  loading.setAttribute("role", "status");
   loading.setAttribute("aria-busy", "true");
 
   try {
