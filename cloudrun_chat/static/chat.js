@@ -34,6 +34,7 @@ function addMessage(role, html) {
 
 function finishLoadingMessage(message) {
   message.classList.remove("message--loading");
+  message.removeAttribute("role");
   message.setAttribute("aria-busy", "false");
 }
 
