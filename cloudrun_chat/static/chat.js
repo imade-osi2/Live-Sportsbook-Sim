@@ -216,7 +216,10 @@ async function submitPrompt(prompt, intent = "") {
     }
 
     const rows = Array.isArray(payload.rows) ? payload.rows : [];
-    const rowCount = Number.isFinite(Number(payload.row_count)) ? Number(payload.row_count) : rows.length;
+    const parsedRowCount = Number(payload.row_count);
+    const rowCount = Number.isFinite(parsedRowCount) && parsedRowCount >= 0
+      ? Math.trunc(parsedRowCount)
+      : rows.length;
     const title = payload.title || "Sportsbook query result";
     const answer = payload.answer || "The chat service returned a result.";
     const intent = payload.intent || "unknown";
