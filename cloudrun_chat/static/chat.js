@@ -74,7 +74,7 @@ function renderTable(rows) {
   }
 
   const tableLabel = `${tableRows.length} sportsbook query result${tableRows.length === 1 ? "" : "s"}`;
-  const head = columns.map((column) => `<th>${escapeHtml(column)}</th>`).join("");
+  const head = columns.map((column) => `<th scope="col">${escapeHtml(column)}</th>`).join("");
   const body = tableRows
     .map((row) => {
       const cells = columns.map((column) => `<td>${escapeHtml(row[column])}</td>`).join("");
