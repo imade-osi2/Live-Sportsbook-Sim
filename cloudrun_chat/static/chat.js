@@ -216,8 +216,9 @@ async function submitPrompt(prompt, intent = "") {
     }
 
     const rows = Array.isArray(payload.rows) ? payload.rows : [];
+    const hasRowCount = payload.row_count !== null && payload.row_count !== undefined && payload.row_count !== "";
     const parsedRowCount = Number(payload.row_count);
-    const rowCount = Number.isFinite(parsedRowCount) && parsedRowCount >= 0
+    const rowCount = hasRowCount && Number.isFinite(parsedRowCount) && parsedRowCount >= 0
       ? Math.trunc(parsedRowCount)
       : rows.length;
     const title = payload.title || "Sportsbook query result";
