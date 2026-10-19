@@ -164,7 +164,10 @@ async function refreshHealth({ showPending = false } = {}) {
     }
 
     hasLoadedHealth = true;
-    setServiceStatus("healthy", `Healthy: ${payload.dataset}`, {
+    const dataset = typeof payload.dataset === "string" && payload.dataset.trim()
+      ? payload.dataset.trim()
+      : "BigQuery";
+    setServiceStatus("healthy", `Healthy: ${dataset}`, {
       preserveQueryError: true,
     });
   } catch (error) {
