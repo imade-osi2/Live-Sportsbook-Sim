@@ -206,7 +206,7 @@ async function submitPrompt(prompt, intent = "") {
     }, QUERY_REQUEST_TIMEOUT_MS);
     const payload = await parseJsonResponse(response);
 
-    if (!response.ok) {
+    if (!response.ok || payload.error) {
       promptInput.value = trimmed;
       updatePromptCount();
       setServiceStatus("error", "Last query failed", { source: "query" });
