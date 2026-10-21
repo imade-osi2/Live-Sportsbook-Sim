@@ -101,7 +101,13 @@ async function parseJsonResponse(response) {
   }
 
   try {
-    return await response.json();
+    const payload = await response.json();
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+      return {
+        error: `The chat service returned an unexpected JSON payload with status ${response.status}.`,
+      };
+    }
+    return payload;
   } catch {
     return {
       error: `The chat service returned malformed JSON with status ${response.status}.`,
