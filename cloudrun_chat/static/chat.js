@@ -184,7 +184,7 @@ async function refreshHealth({ showPending = false } = {}) {
 }
 
 async function submitPrompt(prompt, intent = "") {
-  const trimmed = prompt.trim();
+  const trimmed = String(prompt ?? "").trim();
   if (!trimmed || isSubmitting) {
     updateSubmitState();
     return;
