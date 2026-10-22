@@ -331,7 +331,7 @@ def query():
     if len(prompt) > MAX_PROMPT_CHARS:
         return jsonify(
             {
-                "error": f"Prompt is too long. Keep questions under {MAX_PROMPT_CHARS} characters.",
+                "error": f"Prompt is too long. Keep questions at or below {MAX_PROMPT_CHARS} characters.",
             }
         ), 400
 
