@@ -102,10 +102,10 @@ def choose_intent(prompt):
         return "edge_opportunities"
     if any(term in text for term in ["live", "score", "scores", "game stats", "stats"]):
         return "live_games"
-    if any(term in text for term in ["pregame", "odds", "line", "price", "best number"]):
-        return "best_prices"
     if any(term in text for term in ["bookmaker", "bookmakers", "sportsbook", "sportsbooks"]):
         return "bookmaker_opportunities"
+    if any(term in text for term in ["pregame", "odds", "line", "price", "best number"]):
+        return "best_prices"
     if "opportunit" in text and re.search(r"\bbooks?\b", text):
         return "bookmaker_opportunities"
     return None
