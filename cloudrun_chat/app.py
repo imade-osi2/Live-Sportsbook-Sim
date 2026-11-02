@@ -95,7 +95,7 @@ def run_query(sql):
 
 
 def choose_intent(prompt):
-    text = prompt.lower()
+    text = prompt.casefold()
 
     if any(term in text for term in ["kpi", "summary", "overview", "platform"]):
         return "platform_kpis"
