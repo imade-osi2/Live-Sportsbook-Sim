@@ -1,3 +1,4 @@
+import base64
 import datetime as dt
 import decimal
 import os
@@ -72,6 +73,8 @@ def normalize_value(value):
         return value.isoformat()
     if isinstance(value, decimal.Decimal):
         return float(value)
+    if isinstance(value, bytes):
+        return base64.b64encode(value).decode("ascii")
     return value
 
 
