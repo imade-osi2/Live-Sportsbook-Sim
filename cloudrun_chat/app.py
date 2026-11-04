@@ -3,6 +3,7 @@ import datetime as dt
 import decimal
 import os
 import re
+from collections.abc import Mapping
 from concurrent.futures import TimeoutError
 
 from flask import Flask, jsonify, render_template, request
@@ -75,6 +76,10 @@ def normalize_value(value):
         return str(value)
     if isinstance(value, bytes):
         return base64.b64encode(value).decode("ascii")
+    if isinstance(value, Mapping):
+        return {key: normalize_value(nested_value) for key, nested_value in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [normalize_value(item) for item in value]
     return value
 
 
