@@ -72,7 +72,7 @@ def normalize_value(value):
     if isinstance(value, (dt.date, dt.datetime, dt.time)):
         return value.isoformat()
     if isinstance(value, decimal.Decimal):
-        return float(value)
+        return str(value)
     if isinstance(value, bytes):
         return base64.b64encode(value).decode("ascii")
     return value
