@@ -68,7 +68,7 @@ function renderTable(rows) {
     return "";
   }
 
-  const columns = Object.keys(firstRow);
+  const columns = [...new Set(tableRows.flatMap((row) => Object.keys(row)))];
   if (!columns.length) {
     return "";
   }
