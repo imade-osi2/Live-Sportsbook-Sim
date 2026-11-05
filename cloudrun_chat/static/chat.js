@@ -169,7 +169,6 @@ async function refreshHealth({ showPending = false } = {}) {
       throw new Error(payload.error || "Health probe failed");
     }
 
-    hasLoadedHealth = true;
     const dataset = typeof payload.dataset === "string" && payload.dataset.trim()
       ? payload.dataset.trim()
       : "BigQuery";
@@ -179,6 +178,7 @@ async function refreshHealth({ showPending = false } = {}) {
   } catch (error) {
     setServiceStatus("error", error.message || "Service unavailable");
   } finally {
+    hasLoadedHealth = true;
     isRefreshingHealth = false;
   }
 }
