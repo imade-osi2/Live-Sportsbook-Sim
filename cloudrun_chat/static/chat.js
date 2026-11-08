@@ -93,7 +93,7 @@ function renderTable(rows) {
 }
 
 async function parseJsonResponse(response) {
-  const contentType = response.headers.get("content-type") || "";
+  const contentType = (response.headers.get("content-type") || "").toLowerCase();
   if (!contentType.includes("application/json")) {
     return {
       error: `The chat service returned ${response.status} instead of JSON.`,
