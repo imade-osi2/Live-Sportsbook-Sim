@@ -220,7 +220,10 @@ async function submitPrompt(prompt, intent = "") {
       updatePromptCount();
       setServiceStatus("error", "Last query failed", { source: "query" });
       finishLoadingMessage(loading);
-      loading.innerHTML = `<p>${escapeHtml(payload.error || "The query could not be routed.")}</p>`;
+      const errorMessage = typeof payload.error === "string" && payload.error.trim()
+        ? payload.error
+        : "The query could not be routed.";
+      loading.innerHTML = `<p>${escapeHtml(errorMessage)}</p>`;
       return;
     }
 
