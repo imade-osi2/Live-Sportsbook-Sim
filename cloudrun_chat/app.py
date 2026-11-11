@@ -95,7 +95,10 @@ def run_query(sql):
     try:
         return rows_to_dicts(job.result(timeout=QUERY_TIMEOUT_SECONDS))
     except TimeoutError as exc:
-        job.cancel()
+        try:
+            job.cancel()
+        except Exception:
+            app.logger.warning("Unable to cancel timed-out BigQuery chat query", exc_info=True)
         raise QueryTimeoutError from exc
 
 
