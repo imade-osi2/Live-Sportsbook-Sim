@@ -74,7 +74,7 @@ def normalize_value(value):
         return value.isoformat()
     if isinstance(value, decimal.Decimal):
         return str(value)
-    if isinstance(value, bytes):
+    if isinstance(value, (bytes, bytearray)):
         return base64.b64encode(value).decode("ascii")
     if isinstance(value, Mapping):
         return {key: normalize_value(nested_value) for key, nested_value in value.items()}
