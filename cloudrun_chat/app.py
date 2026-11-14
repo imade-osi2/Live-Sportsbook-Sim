@@ -19,6 +19,7 @@ def add_security_headers(response):
     response.headers.setdefault("X-Frame-Options", "DENY")
     response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
     response.headers.setdefault("Permissions-Policy", "camera=(), geolocation=(), microphone=()")
+    response.headers.setdefault("Cross-Origin-Resource-Policy", "same-origin")
     if request.path in {"/health", "/intents", "/query"}:
         response.headers.setdefault("Cache-Control", "no-store")
     response.headers.setdefault(
