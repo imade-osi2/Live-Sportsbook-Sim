@@ -110,7 +110,10 @@ def choose_intent(prompt):
         return "platform_kpis"
     if any(term in text for term in ["clv", "closing", "beat close", "beat-close"]):
         return "clv_summary"
-    if any(term in text for term in ["edge", "value", "suggested", "recommendation"]):
+    if any(
+        term in text
+        for term in ["edge", "value", "suggested", "recommendation", "best bet", "best bets"]
+    ):
         return "edge_opportunities"
     if any(
         term in text
