@@ -25,7 +25,7 @@ def add_security_headers(response):
     response.headers.setdefault(
         "Content-Security-Policy",
         "default-src 'self'; connect-src 'self'; style-src 'self'; script-src 'self'; "
-        "base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+        "base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'",
     )
     return response
 
