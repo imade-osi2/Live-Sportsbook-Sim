@@ -112,7 +112,16 @@ def choose_intent(prompt):
         return "clv_summary"
     if any(
         term in text
-        for term in ["edge", "value", "suggested", "recommendation", "best bet", "best bets"]
+        for term in [
+            "edge",
+            "value",
+            "suggested",
+            "recommendation",
+            "best bet",
+            "best bets",
+            "top pick",
+            "top picks",
+        ]
     ):
         return "edge_opportunities"
     if any(
