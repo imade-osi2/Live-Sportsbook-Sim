@@ -135,6 +135,9 @@ def choose_intent(prompt):
             "games today",
             "today's games",
             "tonight's games",
+            "who's playing",
+            "who is playing",
+            "what games are on",
         ]
     ):
         return "live_games"
