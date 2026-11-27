@@ -154,7 +154,23 @@ def choose_intent(prompt):
         ]
     ):
         return "bookmaker_opportunities"
-    if any(term in text for term in ["pregame", "odds", "line", "price", "best number"]):
+    if any(
+        term in text
+        for term in [
+            "pregame",
+            "odds",
+            "line",
+            "price",
+            "best number",
+            "moneyline",
+            "money line",
+            "spread",
+            "total",
+            "totals",
+            "over/under",
+            "over under",
+        ]
+    ):
         return "best_prices"
     if "opportunit" in text and re.search(r"\bbooks?\b", text):
         return "bookmaker_opportunities"
