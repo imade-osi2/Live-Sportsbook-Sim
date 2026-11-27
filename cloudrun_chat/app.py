@@ -141,7 +141,18 @@ def choose_intent(prompt):
         ]
     ):
         return "live_games"
-    if any(term in text for term in ["bookmaker", "bookmakers", "sportsbook", "sportsbooks"]):
+    if any(
+        term in text
+        for term in [
+            "bookmaker",
+            "bookmakers",
+            "sportsbook",
+            "sportsbooks",
+            "where to bet",
+            "which book",
+            "which sportsbook",
+        ]
+    ):
         return "bookmaker_opportunities"
     if any(term in text for term in ["pregame", "odds", "line", "price", "best number"]):
         return "best_prices"
